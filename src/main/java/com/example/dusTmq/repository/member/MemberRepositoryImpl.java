@@ -3,10 +3,12 @@ package com.example.dusTmq.repository.member;
 import com.example.dusTmq.domain.user.Authority;
 import com.example.dusTmq.domain.user.Member;
 import com.example.dusTmq.domain.user.QMember;
-import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 @Slf4j
@@ -17,14 +19,16 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport implements I
 
 
     @Override
-    public Member findMember(Authority authority, String email){
-
+    public Optional<Member> findMember(Authority authority, String email){
         QMember member = QMember.member;
-        Tuple tuple = from(member)
-                .select(member.authority, member.email)
-                .where(member.authority.eq(authority), member.email.eq(email))
-                .fetchOne();
-        return (Member) tuple;
+       return Optional.ofNullable(from(member)
+               .select(Projections.fields(Member.class
+                               , member.authority
+                               , member.email
+                       )
+               )
+               .where(member.authority.eq(authority), member.email.eq(email))
+               .fetchOne());
     }
 
 }

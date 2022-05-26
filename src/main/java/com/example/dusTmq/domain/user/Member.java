@@ -1,10 +1,7 @@
 package com.example.dusTmq.domain.user;
 
 import com.example.dusTmq.domain.board.BoardDetailVO;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -15,11 +12,12 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Member {
 
     @Id
     @GeneratedValue
-    @Column(name="memberId")
+    @Column(name="member_id")
     private Long id;
 
     @NotEmpty
