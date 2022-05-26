@@ -15,7 +15,6 @@ import java.util.Optional;
 @Repository
 public class MemberRepositoryImpl implements iMemberQuerydslRepository {
 
-
     private final JPAQueryFactory queryFactory;
 
     @Autowired
