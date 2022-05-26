@@ -37,7 +37,7 @@ out/
 .vscode/
 
 ### Properties ###
-*.properties
+application.properties
 
 ### TestFile ###
 /src/test
