@@ -1,6 +1,7 @@
 package com.example.dusTmq.controller;
 
 import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
+import com.example.dusTmq.domain.user.dto.MemberDTO;
 import com.example.dusTmq.service.Board.IBoard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,10 @@ public class mainController {
     }
     @GetMapping("/login")
     public ModelAndView login(){
+        MemberDTO memberDTO = new MemberDTO();
         ModelAndView mv = new ModelAndView();
+
+        mv.addObject("memberDTO", memberDTO);
         mv.setViewName("/login/login");
         return mv;
     }

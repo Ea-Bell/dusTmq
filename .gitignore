@@ -38,7 +38,7 @@ out/
 
 ### Properties ###
 application.properties
-
+application-oauth.properties
 ### TestFile ###
 /src/test
 

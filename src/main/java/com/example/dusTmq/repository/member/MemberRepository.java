@@ -13,7 +13,8 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long>, iMemberQuerydslRepository {
 
 
-    @Query("select m from Member m where m.authority= :authority and m.email = :email")
-    Optional<Member> findEmailInQuery(@Param("authority") Authority authority, @Param("email") String email);
+    @Query("select m from Member m where m.auth= :authority and m.email = :email")
+    Optional<Member> findEmailInQuery(@Param("authority") String authority, @Param("email") String email);
+    Optional<Member> findByEmail(String email);
 
 }

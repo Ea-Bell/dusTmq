@@ -5,6 +5,9 @@ import com.example.dusTmq.domain.user.Member;
 import com.example.dusTmq.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,14 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-
     private final MemberRepository memberRepository;
 
     @Transactional
     @Override
     public void saveMember(Member member) throws MemberException {
 
-        boolean duplication = memberRepository.duplicationCheckByMember(member.getAuthority(), member.getEmail());
+        boolean duplication = memberRepository.existsByEmail(member.getAuth(), member.getEmail());
         if(!duplication){
             memberRepository.save(member);
             log.debug("memberSave={}", member.toString());
@@ -29,4 +31,8 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return (UserDetails) memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+    }
 }

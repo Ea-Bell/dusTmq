@@ -24,33 +24,34 @@ public class MemberRepositoryImpl implements iMemberQuerydslRepository {
 
     //TODO 2022-05-26 최적화 생각해보기
     //권한, 이메일을 통해 Member 찾기
+
     @Override
-    public Optional<Member> findMember(Authority authority, String email){
+    public Optional<Member> findMember(String authority, String email){
         QMember member = QMember.member;
        return Optional.ofNullable(
                queryFactory.select(Projections.fields(Member.class
-                       , member.authority
+                       , member.auth
                        , member.email
                )
        )
                .from(member)
-               .where(member.authority.eq(authority), member.email.eq(email))
+               .where(member.auth.eq(authority), member.email.eq(email))
                .fetchOne());
     }
 
 
     //중복이면 true 아니면 false
     @Override
-    public boolean duplicationCheckByMember(Authority authority, String email){
+    public boolean existsByEmail(String authority, String email){
         QMember member= QMember.member;
-        Long count = queryFactory.select(
+        Long exists = queryFactory.select(
                         member.count()
                 )
                 .from(member)
-                .where(member.authority.eq(authority), member.email.eq(email)).fetchOne();
+                .where(member.auth.eq(authority), member.email.eq(email)).fetchOne();
 
         //값이 존재하면 true
-       if(count >= 1){
+       if(exists >= 1){
            return true;
        }
        return false;

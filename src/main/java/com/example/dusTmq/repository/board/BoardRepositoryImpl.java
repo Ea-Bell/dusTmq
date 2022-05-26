@@ -1,6 +1,7 @@
 package com.example.dusTmq.repository.board;
 
 
+
 import com.example.dusTmq.domain.board.QBoardDetailVO;
 import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
 import com.querydsl.core.types.Projections;
