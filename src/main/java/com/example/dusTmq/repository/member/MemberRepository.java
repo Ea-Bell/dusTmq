@@ -8,7 +8,9 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface JPAMemberRepository extends JpaRepository<Member, Long> {
+
+//간단한 쿼리는 Spring Data JPA로 처리할것.
+public interface MemberRepository extends JpaRepository<Member, Long>, iMemberQuerydslRepository {
 
 
     @Query("select m from Member m where m.authority= :authority and m.email = :email")
