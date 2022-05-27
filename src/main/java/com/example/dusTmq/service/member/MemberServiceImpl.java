@@ -55,13 +55,12 @@ public class MemberServiceImpl implements MemberService {
     //스프링이 로그인 요청을 가로챌때 email, password 변수 2개를 가로챘는데
     // password 부분 처리는 알아서 처리,
     // email 이 DB에 있는지 확인 여부 필요
+
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        Member member = memberRepository.findByEmail(email);
-
-        if(member ==null){
-            throw new UsernameNotFoundException("Not Found account.");
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Member member = memberRepository.findByEmail(username);
+        if(member == null){
+            throw new UsernameNotFoundException("Not Found account");
         }
         return member;
     }

@@ -44,12 +44,12 @@
                                     <form class="user" th:name="userForm" th:id="userForm" th:object="${memberLoginDTO}" >
                                         <div class="form-group">
                                             <input th:type="email" class="form-control form-control-user"
-                                                th:field="*{email}" aria-describedby="emailHelp"
+                                                th:field="*{username}" aria-describedby="emailHelp"
                                                 placeholder="Enter Email Address...">
                                         </div>
                                         <div class="form-group">
                                             <input th:type="password" class="form-control form-control-user"
-                                                th:field="*{pwd}" placeholder="Password">
+                                                th:field="*{password}" placeholder="Password">
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
@@ -59,7 +59,7 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <button th:type="submit" th:form="userForm" th:formaction="@{/login_proc}"  th:formmethod="post" class="btn btn-primary btn-user btn-block">
+                                    <button th:type="submit" th:form="userForm" th:formaction="@{/login/login_proc}"  th:formmethod="post" class="btn btn-primary btn-user btn-block">
                                         Login
                                     </button>
 

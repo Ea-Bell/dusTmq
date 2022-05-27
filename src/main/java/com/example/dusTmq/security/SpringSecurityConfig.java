@@ -66,31 +66,32 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .formLogin()
                     .loginPage("/login")
-                    .loginProcessingUrl("/login_proc") //로그인의 Form  Action Url과 맞춰야 한다.
-                    .usernameParameter("email")  //디폴트가 username
-                    .passwordParameter("pwd")    //디폴트가 password 라서 다른걸로 바꿔쓸때는 반드시 바꿔줘야한다.
+ //                   .usernameParameter("email")  //디폴트가 username
+ //                   .passwordParameter("pwd")    //디폴트가 password 라서 다른걸로 바꿔쓸때는 반드시 바꿔줘야한다.
+                    .loginProcessingUrl("/login/login_proc") //해당 URL로 요청이 오면 스프링 시큐리티가 가로채서 로그인을 처리한다 -> loadUserByName
                     .successHandler(authSucessHandler)
                     .failureHandler(authFailureHandler)
-                    .defaultSuccessUrl("/")
-                .and()
-                    .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) //로그아웃 URL
-                    .logoutSuccessUrl("/login")
-                    .invalidateHttpSession(true)  //세션 날리기
-                .deleteCookies("JSESSIONID", "remember-me") // JSESSIONID, remember-me 쿠키 삭제
-
-                //중복 로그인 체크
-                .and()
-                    .sessionManagement()
-                    .maximumSessions(1)
-                    .maxSessionsPreventsLogin(false) //false 이면 중복 로그인하면 이전 로그인이 풀린다.
-                    .expiredUrl("/login?error=true&exception= Have been attempted to login from a nwe place. or session expired") // 세션이 만료된 경우 이동 할 페이지를 지정
-                .and()
-                .and()
-                    .rememberMe() //로그인 유지
-                    .alwaysRemember(false)
-                    .tokenValiditySeconds(43200)  // in seconds, 12시간 유지
-                    .rememberMeParameter("remember-me");
+                    .defaultSuccessUrl("/index")
+//                .and()
+//                    .logout()
+//                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) //로그아웃 URL
+//                    .logoutSuccessUrl("/login")
+//                    .invalidateHttpSession(true)  //세션 날리기
+//                .deleteCookies("JSESSIONID", "remember-me") // JSESSIONID, remember-me 쿠키 삭제
+//
+//                //중복 로그인 체크
+//                .and()
+//                    .sessionManagement()
+//                    .maximumSessions(1)
+//                    .maxSessionsPreventsLogin(false) //false 이면 중복 로그인하면 이전 로그인이 풀린다.
+//                    .expiredUrl("/login?error=true&exception= Have been attempted to login from a nwe place. or session expired") // 세션이 만료된 경우 이동 할 페이지를 지정
+//                .and()
+//                .and()
+//                    .rememberMe() //로그인 유지
+//                    .alwaysRemember(false)
+//                    .tokenValiditySeconds(43200)  // in seconds, 12시간 유지
+//                    .rememberMeParameter("remember-me")
+                    ;
     }
 
     @Override
