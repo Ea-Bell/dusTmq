@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +20,22 @@ public class loginController {
     private final MemberService memberService;
 
 
-    @PostMapping("/memberAdd")
-    public ModelAndView ModelAndView(@Validated @ModelAttribute("memberDTO") MemberDTO memberDTO, BindingResult bindingResult){
+    @PostMapping("/register")
+    public ModelAndView memberAdd(@Validated @ModelAttribute("memberDTO") MemberDTO memberDTO, BindingResult bindingResult){
         ModelAndView mv =new ModelAndView();
 
         mv.addObject("memberDTO", memberDTO);
+        return mv;
+    }
+
+    @GetMapping("/register")
+    public ModelAndView memberAdd(){
+        MemberDTO memberDTO = new MemberDTO();
+        ModelAndView mv = new ModelAndView();
+
+        mv.setViewName("/login/register");
+        mv.addObject("memberDTO", memberDTO);
+
         return mv;
     }
 

@@ -28,15 +28,15 @@ public class NoticeBoard {
     private final IBoard boardService;
     private final String noticeBoardEdit = "noticeBoard/noticeBoardEdit";
     private final String noticeBoard = "noticeBoard/noticeBoard";
-    private final String noticeBoardAdd = "noticeBoard/noticeBoardAdd";
-    @GetMapping("/noticeBoardAdd")
+    private final String noticeBoardAdd = "noticeBoard/noticeBoardRegister";
+    @GetMapping("/noticeBoardRegister")
     public String boardAdd(Model mv){
         BoardDTO boardDTO = new BoardDTO();
         mv.addAttribute(boardDTO);
         return noticeBoardAdd;
     }
 
-    @PostMapping(value = "/noticeBoardAdd")
+    @PostMapping(value = "/noticeBoardRegister")
     public String boardAdd(@Validated @ModelAttribute("boardDTO") BoardDTO boardDTO, BindingResult bindingResult, Model mv) throws CommonException {
         if(bindingResult.hasErrors()){
             Message errorMsg = boardError(bindingResult);
