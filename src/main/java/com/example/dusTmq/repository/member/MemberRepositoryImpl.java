@@ -40,7 +40,7 @@ public class MemberRepositoryImpl implements iMemberQuerydslRepository {
     }
 
 
-    //중복이면 true 아니면 false
+    //권한과 이메일이 중복확인
     @Override
     public boolean existsByEmail(String authority, String email){
         QMember member= QMember.member;
@@ -57,4 +57,19 @@ public class MemberRepositoryImpl implements iMemberQuerydslRepository {
        return false;
     }
 
+    //이메일이 중복 확인
+    public boolean existsByEmail(String email){
+        QMember member= QMember.member;
+        Long exists = queryFactory.select(
+                        member.count()
+                )
+                .from(member)
+                .where(member.email.eq(email)).fetchOne();
+
+        //값이 존재하면 true
+        if(exists >= 1){
+            return true;
+        }
+        return false;
+    }
 }

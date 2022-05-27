@@ -1,5 +1,6 @@
 package com.example.dusTmq.domain.user.dto;
 
+import com.example.dusTmq.domain.user.Gender;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -17,7 +18,7 @@ public class MemberDTO {
     @NotEmpty
     private String pwd;
     @NotEmpty
-    private String sex;
+    private Gender sex;
     @NotEmpty
     private int age;
 

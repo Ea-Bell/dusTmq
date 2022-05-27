@@ -26,17 +26,20 @@ public class Member implements UserDetails {
     @GeneratedValue
     @Column(name="member_id")
     private Long id;
-
     @NotNull
-    @NotEmpty
     private String username;
     @NotNull
-    @NotEmpty
     @Email
     private String email;
     @NotNull
-    @NotEmpty
     private String password;
+    @NotNull
+    private int age;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+    @NotNull
+    private String auth;
 
     @NotNull
     private LocalDateTime regDate;
@@ -50,25 +53,24 @@ public class Member implements UserDetails {
 //    @Column(name = "user_role")
 //    private Authority authority;
 
-    @NotNull
-    private String auth;
-
     @Builder
-    public Member(String username, String email, String password, String auth, LocalDateTime regDate, LocalDateTime updateDate, LocalDateTime deleteTime) {
+    public Member(String username, String email, String password, int age, Gender gender, String auth, LocalDateTime regDate, LocalDateTime updateDate, LocalDateTime deleteTime) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.age = age;
+        this.gender = gender;
+        this.auth = auth;
         this.regDate = regDate;
         this.updateDate = updateDate;
         this.deleteTime = deleteTime;
-        this.auth = auth;
     }
 
-    public Member() {
 
-    }
 
-    
+
+
+
     //사용자의 권한을 콜렉션 형태로 반환
     //단, 클래스 자료형은 GrantedAuthority 를 구현해야함
     @Override

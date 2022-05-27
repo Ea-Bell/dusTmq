@@ -2,8 +2,8 @@ package com.example.dusTmq.domain.user;
 
 public enum Authority {
 
-    ADMIN("ADMIN"),
-    USER("USER");
+    ROLL_ADMIN("ROLL_ADMIN"),
+    ROLL_USER("ROLL_USER");
 
     private String auth;
 
