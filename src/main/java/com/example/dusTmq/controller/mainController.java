@@ -2,6 +2,7 @@ package com.example.dusTmq.controller;
 
 import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
 import com.example.dusTmq.domain.user.dto.MemberDTO;
+import com.example.dusTmq.domain.user.dto.MemberLoginDTO;
 import com.example.dusTmq.service.Board.IBoard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,16 +37,16 @@ public class mainController {
         ModelAndView mv = new ModelAndView();
         Page<BoardListDTO> boardListDTOS = boardService.pagingBoardListBy(pageable);
         mv.addObject("boardListDTOS", boardListDTOS);
-        mv.setViewName("/noticeBoard/noticeBoardList");
+        mv.setViewName("noticeBoard/noticeBoardList");
         return mv;
     }
     @GetMapping("/login")
     public ModelAndView login(){
-        MemberDTO memberDTO = new MemberDTO();
+        MemberLoginDTO memberLoginDTO = new MemberLoginDTO();
         ModelAndView mv = new ModelAndView();
 
-        mv.addObject("memberDTO", memberDTO);
-        mv.setViewName("/login/login");
+        mv.addObject("memberLoginDTO", memberLoginDTO);
+        mv.setViewName("login/login");
         return mv;
     }
     
@@ -53,7 +54,7 @@ public class mainController {
     @GetMapping("/blank")
     public ModelAndView blank(){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/common/blank");
+        mv.setViewName("common/blank");
         return mv;
     }
 }

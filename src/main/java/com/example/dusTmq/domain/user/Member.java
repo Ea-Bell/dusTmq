@@ -18,6 +18,7 @@ import java.util.Set;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class Member implements UserDetails {
@@ -65,9 +66,6 @@ public class Member implements UserDetails {
         this.updateDate = updateDate;
         this.deleteTime = deleteTime;
     }
-
-
-
 
 
 

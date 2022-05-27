@@ -6,22 +6,17 @@ import lombok.ToString;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Data
 @ToString
-public class MemberDTO {
+public class MemberLoginDTO {
 
     @Email
     @NotEmpty
     private String email;
-    @NotEmpty
-    private String name;
+
     @NotEmpty
     private String pwd;
-    @NotEmpty
-    private Gender sex;
-    @NotEmpty
-    private int age;
+
 
 }

@@ -15,6 +15,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>, iMemberQu
 
     @Query("select m from Member m where m.auth= :authority and m.email = :email")
     Optional<Member> findEmailInQuery(@Param("authority") String authority, @Param("email") String email);
-    Optional<Member> findByEmail(String email);
+    Member findByEmail(String email);
 
 }

@@ -58,11 +58,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을수 없습니다. :"+email));
+        Member member = memberRepository.findByEmail(email);
 
-        log.debug("member={}",member);
+        if(member ==null){
+            throw new UsernameNotFoundException("Not Found account.");
+        }
         return member;
-
-
     }
 }
