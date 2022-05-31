@@ -5,9 +5,12 @@ import com.example.dusTmq.common.StatusEnum;
 import com.example.dusTmq.common.exception.CommonException;
 import com.example.dusTmq.domain.board.BoardDetailVO;
 import com.example.dusTmq.domain.board.viewDto.BoardDTO;
+import com.example.dusTmq.domain.user.Member;
+import com.example.dusTmq.domain.user.dto.MemberSessionDTO;
 import com.example.dusTmq.service.Board.IBoard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +18,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,18 +31,23 @@ public class NoticeBoard {
 
 
     private final IBoard boardService;
-    private final String noticeBoardEdit = "noticeBoard/noticeBoardEdit";
-    private final String noticeBoard = "noticeBoard/noticeBoard";
-    private final String noticeBoardAdd = "noticeBoard/noticeBoardRegister";
+    private final static String noticeBoardEdit = "/noticeBoard/noticeBoardEdit";
+    private final static String noticeBoard = "/noticeBoard/noticeBoard";
+    private final static String noticeBoardAdd = "/noticeBoard/noticeBoardRegister";
     @GetMapping("/noticeBoardRegister")
-    public String boardAdd(Model mv){
+    public String boardAdd(Model mv, HttpServletRequest request){
         BoardDTO boardDTO = new BoardDTO();
         mv.addAttribute(boardDTO);
         return noticeBoardAdd;
     }
 
     @PostMapping(value = "/noticeBoardRegister")
-    public String boardAdd(@Validated @ModelAttribute("boardDTO") BoardDTO boardDTO, BindingResult bindingResult, Model mv) throws CommonException {
+    public String boardAdd(@Validated @ModelAttribute("boardDTO") BoardDTO boardDTO, BindingResult bindingResult, HttpServletRequest request, Model mv) throws CommonException {
+
+        HttpSession session = request.getSession();
+        MemberSessionDTO member = (MemberSessionDTO) session.getAttribute("member"); //캐스캐이팅 조심
+        log.debug("session={}",member.toString());
+
         if(bindingResult.hasErrors()){
             Message errorMsg = boardError(bindingResult);
             mv.addAttribute("errorMsg", errorMsg);

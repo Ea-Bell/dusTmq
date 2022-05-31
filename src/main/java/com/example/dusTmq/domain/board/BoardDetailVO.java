@@ -31,28 +31,31 @@ public class BoardDetailVO {
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deleteDate;
+
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updateDate;
     @NotNull
     private String createUserName;
     @NotNull
     private String deleteUserName;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_id")
+//    private Member member;
 
 
     @Builder
-    public BoardDetailVO( String title, String detail, LocalDateTime createDate, LocalDateTime deleteDate, String createUserName, String deleteUserName) {
+    public BoardDetailVO(String title, String detail, LocalDateTime createDate, LocalDateTime deleteDate, LocalDateTime updateDate, String createUserName, String deleteUserName) {
         this.title = title;
         this.detail = detail;
         this.createDate = createDate;
         this.deleteDate = deleteDate;
+        this.updateDate = updateDate;
         this.createUserName = createUserName;
         this.deleteUserName = deleteUserName;
     }
-
-
 
     public BoardDetailVO() {
 
@@ -61,7 +64,8 @@ public class BoardDetailVO {
     public void updateBoardDetail(String title, String detail, LocalDateTime updateDate,  String updateUserName){
             this.title=title;
             this.detail=detail;
-            this.createDate=updateDate;
+            this.updateDate=updateDate;
             this.createUserName=updateUserName;
     }
+
 }

@@ -3,7 +3,6 @@ package com.example.dusTmq.service.Board;
 import com.example.dusTmq.domain.board.BoardDetailVO;
 import com.example.dusTmq.domain.board.viewDto.BoardDTO;
 import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
-import com.example.dusTmq.domain.user.Member;
 import com.example.dusTmq.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

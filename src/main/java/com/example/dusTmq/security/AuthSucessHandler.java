@@ -1,4 +1,4 @@
-package com.example.dusTmq.common;
+package com.example.dusTmq.security;
 
 import com.example.dusTmq.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Component
@@ -18,12 +19,12 @@ public class AuthSucessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final MemberRepository memberRepository;
 
-
-    //TODO: 로그인을 했으면 로그인 접속 시간 기록해두기.
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
 
+        memberRepository.updateMemberLastLogin(authentication.getName(), LocalDateTime.now());
         setDefaultTargetUrl("/");
         super.onAuthenticationSuccess(request, response, chain, authentication);
+
     }
 }
