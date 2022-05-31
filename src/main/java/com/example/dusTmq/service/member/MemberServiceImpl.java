@@ -7,7 +7,6 @@ import com.example.dusTmq.domain.user.dto.MemberSessionDTO;
 import com.example.dusTmq.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.Local;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -41,7 +39,14 @@ public class MemberServiceImpl implements MemberService {
          memberRepository.save(member);
     }
 
+    @Transactional
     @Override
+    public void updateMemberLastLogin(String email, LocalDateTime localDateTime){
+        memberRepository.updateMemberLastLogin(email, localDateTime);
+    }
+
+    @Override
+    @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         memberRepository.updateMemberLastLogin(email, LocalDateTime.now());
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Not Found account."));
