@@ -28,13 +28,13 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void saveMember(Member member) throws MemberException {
 
-//        boolean duplication = memberRepository.duplicationCheckByMember(member.getAuthority(), member.getEmail());
-//        if(!duplication){
-//            memberRepository.save(member);
-//            log.debug("memberSave={}", member.toString());
-//        }else {
-//            throw new MemberException("이메일이 중복입니다.");
-//        }
+        boolean duplication = memberRepository.duplicationCheckByMember(member.getRole(), member.getEmail());
+        if(!duplication){
+            memberRepository.save(member);
+            log.debug("memberSave={}", member.toString());
+        }else {
+            throw new MemberException("이메일이 중복입니다.");
+        }
 
          memberRepository.save(member);
     }

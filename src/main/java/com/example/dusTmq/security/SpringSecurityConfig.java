@@ -1,4 +1,4 @@
-package com.example.dusTmq.repository.security;
+package com.example.dusTmq.security;
 
 
 import com.example.dusTmq.service.member.MemberService;
@@ -31,9 +31,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final MemberService memberService;
     private final AuthSucessHandler authSucessHandler;
     private final AuthFailureHandler authFailureHandler;
-    private final static String[] USER_WHITELIST = {"/**","/user/**", "/noticeBoard/**"};
+    private final static String[] USER_WHITELIST = {"/","/user/**", "/noticeBoard/**"};
     private final static String [] ADMIN_WHITELIST = {"/admin/**"};
-    private final static String[] PERMIT_ALL_WHITELIST = {"/css/**", "/js/**", "/img/**","/error","/favicon.ico","/vendor/**","/scss/**","/login/**",};
+    private final static String[] PERMIT_ALL_WHITELIST = {"/css/**", "/js/**", "/img/**","/error","/favicon.ico","/vendor/**","/scss/**","/login/**","/register"};
 
     @Bean
     public BCryptPasswordEncoder encryptPassword(){

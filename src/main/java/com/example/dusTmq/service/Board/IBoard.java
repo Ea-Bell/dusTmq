@@ -3,6 +3,7 @@ package com.example.dusTmq.service.Board;
 import com.example.dusTmq.domain.board.BoardDetailVO;
 import com.example.dusTmq.domain.board.viewDto.BoardDTO;
 import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
+import com.example.dusTmq.domain.user.Member;
 import com.example.dusTmq.domain.user.dto.MemberSessionDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,8 +15,6 @@ import java.util.Optional;
 
 public interface IBoard {
 
-    @Transactional
-    void boardSave(BoardDTO boardDTO);
 
     @Transactional
     void boardSave(BoardDTO boardDTO, String email);

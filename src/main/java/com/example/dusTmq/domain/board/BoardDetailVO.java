@@ -37,34 +37,29 @@ public class BoardDetailVO {
     private LocalDateTime updateDate;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Member.class)
-    @JoinColumn(name = "email")
-    private String createUserName;
+    @JoinColumn(name = "member_id")
+    private Member member;
     @NotNull
     private String deleteUserName;
 
     @Builder
-    public BoardDetailVO(String title, String detail, LocalDateTime createDate, LocalDateTime deleteDate, LocalDateTime updateDate, String createUserName, String deleteUserName) {
+    public BoardDetailVO(String title, String detail, LocalDateTime createDate, LocalDateTime deleteDate, LocalDateTime updateDate, Member createUserName, String deleteUserName) {
         this.title = title;
         this.detail = detail;
         this.createDate = createDate;
         this.deleteDate = deleteDate;
         this.updateDate = updateDate;
-        this.createUserName = createUserName;
+        this.member = createUserName;
         this.deleteUserName = deleteUserName;
     }
 
     public BoardDetailVO() {
     }
 
-    public void updateBoardDetail(String title, String detail, LocalDateTime updateDate,  String updateUserName){
+    public void updateBoardDetail(String title, String detail, LocalDateTime updateDate,  Member updateUserName){
             this.title=title;
             this.detail=detail;
             this.updateDate=updateDate;
-            this.createUserName=updateUserName;
+            this.member=updateUserName;
     }
-
-    public void deleteBoardDetail(Long id, String deleteUserName, LocalDateTime deleteDate){
-
-    }
-
 }

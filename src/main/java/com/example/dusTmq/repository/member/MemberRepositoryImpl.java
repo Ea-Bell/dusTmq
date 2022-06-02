@@ -1,6 +1,7 @@
 package com.example.dusTmq.repository.member;
 
 import com.example.dusTmq.domain.user.Member;
+import com.example.dusTmq.domain.user.QMember;
 import com.example.dusTmq.domain.user.Role;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -42,17 +43,17 @@ public class MemberRepositoryImpl implements iMemberQuerydslRepository {
     //중복이면 true 아니면 false
     @Override
     public boolean duplicationCheckByMember(Role role, String email){
-//        QMember member= QMember.member;
-//        Long count = queryFactory.select(
-//                        member.count()
-//                )
-//                .from(member)
-//                .where(member..eq(role), member.email.eq(email)).fetchOne();
+        QMember member= QMember.member;
+        Long count = queryFactory.select(
+                        member.count()
+                )
+                .from(member)
+                .where(member.role.eq(role), member.email.eq(email)).fetchOne();
 
-//        //값이 존재하면 true
-//       if(count >= 1){
-//           return true;
-//       }
+        //값이 존재하면 true
+       if(count >= 1){
+           throw  new IllegalArgumentException("Email is Exist");
+       }
        return false;
     }
 

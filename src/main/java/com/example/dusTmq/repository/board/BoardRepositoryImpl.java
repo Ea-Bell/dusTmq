@@ -1,9 +1,11 @@
 package com.example.dusTmq.repository.board;
 
 
+import com.example.dusTmq.domain.board.BoardDetailVO;
 import com.example.dusTmq.domain.board.QBoardDetailVO;
 import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
 import com.example.dusTmq.domain.user.QMember;
+import com.example.dusTmq.domain.user.dto.MemberRegisterDTO;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -34,7 +36,7 @@ public class BoardRepositoryImpl  implements IBoardRepository{
                 queryFactory
                         .select(
                         Projections.bean(BoardListDTO.class,
-                                boardDetailVO.id, boardDetailVO.title, boardDetailVO.createUserName, boardDetailVO.createDate))
+                                boardDetailVO.id, boardDetailVO.title, boardDetailVO.member.email.as("email"), boardDetailVO.createDate))
                 .orderBy(boardDetailVO.id.desc())
                         .from(boardDetailVO)
                 .offset(pageable.getOffset())
@@ -43,10 +45,9 @@ public class BoardRepositoryImpl  implements IBoardRepository{
 
        //conunt 쿼리 분리
         JPQLQuery<BoardListDTO> count =
-
             queryFactory
                     .select(Projections.bean(BoardListDTO.class,
-                        boardDetailVO.id, boardDetailVO.title, boardDetailVO.createUserName, boardDetailVO.createDate))
+                        boardDetailVO.id, boardDetailVO.title, boardDetailVO.member.email.as("email"), boardDetailVO.createDate))
                         .from(boardDetailVO);
 
 
@@ -76,15 +77,14 @@ public class BoardRepositoryImpl  implements IBoardRepository{
 //             return true;
 //         }
 //         return false;
-        Long query = queryFactory.select(boardDetailVO.createUserName.count())
+        Long query = queryFactory.select(boardDetailVO.member.count())
                 .from(boardDetailVO)
                 .where(boardDetailVO.id.eq(id)
-                        .and(boardDetailVO.createUserName.email.eq(email)))
+                        .and(boardDetailVO.member.email.eq(email)))
                 .fetchOne();
          if(query >=1){
              return true;
          }
          return false;
-
     }
 }

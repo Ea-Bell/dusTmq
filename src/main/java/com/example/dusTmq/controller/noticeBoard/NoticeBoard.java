@@ -23,6 +23,8 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.dusTmq.common.Message.getMessage;
+
 @Controller
 @Slf4j
 @RequestMapping("/noticeBoard")
@@ -106,21 +108,8 @@ public class NoticeBoard {
         return "redirect:/noticeBoard";
     }
 
-
     private Message boardError(BindingResult bindingResult) {
-        Message errorMsg = new Message();
-        FieldError fieldError = bindingResult.getFieldError();
-
-        errorMsg.setStatus(StatusEnum.BAD_REQUEST);
-        errorMsg.setMessage(fieldError.getDefaultMessage());
-        errorMsg.setData(fieldError.getField());
-
-        log.error("errorMsg={}", errorMsg);
-        return errorMsg;
+        return getMessage(bindingResult, log);
     }
-
-
-
     //공통처리할 bindingResult.hasErrors()를 처리할 방법을 생각해야함.
-
 }

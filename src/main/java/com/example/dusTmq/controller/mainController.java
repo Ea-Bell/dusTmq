@@ -1,15 +1,31 @@
 package com.example.dusTmq.controller;
 
+import com.example.dusTmq.common.Message;
+import com.example.dusTmq.common.StatusEnum;
+import com.example.dusTmq.common.exception.MemberException;
 import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
+import com.example.dusTmq.domain.user.Member;
+import com.example.dusTmq.domain.user.Role;
+import com.example.dusTmq.domain.user.dto.MemberRegisterDTO;
 import com.example.dusTmq.service.Board.IBoard;
+import com.example.dusTmq.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.time.LocalDateTime;
+
+import static com.example.dusTmq.common.Message.getMessage;
 
 @RestController
 @Slf4j
@@ -18,16 +34,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class mainController {
 
     private final IBoard boardService;
+    private final MemberService memberService;
+    private final BCryptPasswordEncoder encoder;
+
     private String path = "/noticeBoard";
-
-
-//    @GetMapping("/index")
-//    public ModelAndView index (){
-//        ModelAndView mv = new ModelAndView();
-//        mv.setViewName("/index");
-//        return mv;
-//    }
-
     @GetMapping("/noticeBoard")
     public ModelAndView tables(@PageableDefault(size = 100000, sort = "id", direction = Sort.Direction.DESC ) Pageable pageable){
         ModelAndView mv = new ModelAndView();
@@ -49,18 +59,27 @@ public class mainController {
         return mv;
     }
 
-//    @PostMapping("/login")
-//    public ModelAndView login(@RequestParam Map<String, Object>result) {
-//        ModelAndView mv = new ModelAndView();
-//
-//        log.debug("username={}, password={}", result.toString(), result.toString());
-//        mv.setViewName("redirect:/index");
-//        return mv;
-//    }
     @GetMapping("/register")
     public ModelAndView memberRegister(){
         ModelAndView mv = new ModelAndView();
+        MemberRegisterDTO memberRegisterDTO = new MemberRegisterDTO();
+        mv.addObject("memberRegisterDTO", memberRegisterDTO);
         mv.setViewName("/login/register");
+        return mv;
+    }
+    @PostMapping("/register")
+    public ModelAndView memberRegister(@Validated @ModelAttribute MemberRegisterDTO memberRegisterDTO, BindingResult bindingResult) throws MemberException {
+        log.debug("MemberRegisterDTO={}", memberRegisterDTO);
+        ModelAndView mv = new ModelAndView();
+        Member member = Member.builder()
+                .role(Role.ROLE_USER)
+                .email(memberRegisterDTO.getEmail())
+                .pwd(encoder.encode(memberRegisterDTO.getPwd()))
+                .lastLoginTime(LocalDateTime.now())
+                .build();
+        memberService.saveMember(member);
+
+        mv.setViewName("redirect:/login?register_Success");
         return mv;
     }
     
@@ -83,4 +102,8 @@ public class mainController {
         mv.setViewName("/user/userInfo");
         return mv;
     }
+
+
+
+
 }
