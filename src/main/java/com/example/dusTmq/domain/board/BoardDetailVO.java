@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-
-@ToString
+//JPA의 롬복의 toString을 사용시 순환 참조가 생김으로 exclude로 순환참조 예방
+@ToString(exclude = "createUserName")
 @Entity
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -54,7 +54,6 @@ public class BoardDetailVO {
     }
 
     public BoardDetailVO() {
-
     }
 
     public void updateBoardDetail(String title, String detail, LocalDateTime updateDate,  String updateUserName){
@@ -62,6 +61,10 @@ public class BoardDetailVO {
             this.detail=detail;
             this.updateDate=updateDate;
             this.createUserName=updateUserName;
+    }
+
+    public void deleteBoardDetail(Long id, String deleteUserName, LocalDateTime deleteDate){
+
     }
 
 }

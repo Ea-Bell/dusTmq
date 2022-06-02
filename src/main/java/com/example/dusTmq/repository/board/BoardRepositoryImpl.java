@@ -62,14 +62,24 @@ public class BoardRepositoryImpl  implements IBoardRepository{
     public boolean matchEmailAndBoardEmailId(String email, Long id){
 
         QBoardDetailVO boardDetailVO = QBoardDetailVO.boardDetailVO;
-        QMember member = QMember.member;
+        //객체끼리의 joinQuery 의 다른 방법
+//        QMember member = QMember.member;
+//        Long query = queryFactory.select(boardDetailVO.createUserName.count())
+//                .from(boardDetailVO)
+//                .where(boardDetailVO.id.eq(id)
+//                        .and(boardDetailVO.createUserName.in(JPAExpressions
+//                        .select(member.email)
+//                        .from(member)
+//                        .where(member.email.eq(email)))))
+//                .fetchOne();
+//         if(query >=1){
+//             return true;
+//         }
+//         return false;
         Long query = queryFactory.select(boardDetailVO.createUserName.count())
                 .from(boardDetailVO)
                 .where(boardDetailVO.id.eq(id)
-                        .and(boardDetailVO.createUserName.in(JPAExpressions
-                        .select(member.email)
-                        .from(member)
-                        .where(member.email.eq(email)))))
+                        .and(boardDetailVO.createUserName.email.eq(email)))
                 .fetchOne();
          if(query >=1){
              return true;

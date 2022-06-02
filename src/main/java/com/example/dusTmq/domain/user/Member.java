@@ -24,6 +24,7 @@ public class Member {
     private Long id;
     @NotNull
     @Email
+    @Column(unique = true)
     private String email;
     @NotNull
     private String pwd;
