@@ -1,4 +1,4 @@
-package com.example.dusTmq.common;
+package com.example.dusTmq.security;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
@@ -11,25 +11,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
 @Component
 public class AuthFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+        String msg = "Invalid Email or Password";
 
-        String errorMsg = "Invalid Email or Password";
-        
-        //exception 관련 메시지
+        //exception 관련 메시지 처리
         if (exception instanceof DisabledException) {
-            errorMsg = "DisabledException account";
-        } else if(exception instanceof CredentialsExpiredException){
-            errorMsg = "CredentialsExpiredException account";
+            msg = "DisabledException account";
+        } else if (exception instanceof CredentialsExpiredException) {
+            msg = "CredentialsExpiredException account";
         } else if (exception instanceof BadCredentialsException) {
-            errorMsg = "BadCredentialsException account";
+            msg = "badCredentialsException account";
         }
-
-        setDefaultFailureUrl("/login?error=true&exception="+errorMsg);
+        setDefaultFailureUrl("/login?error=true&exception=" + msg);
 
 
         super.onAuthenticationFailure(request, response, exception);

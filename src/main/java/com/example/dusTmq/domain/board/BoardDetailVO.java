@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-
-@ToString
+//JPA의 롬복의 toString을 사용시 순환 참조가 생김으로 exclude로 순환참조 예방
+@ToString(exclude = "createUserName")
 @Entity
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,37 +31,35 @@ public class BoardDetailVO {
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deleteDate;
+
     @NotNull
-    private String createUserName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updateDate;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Member.class)
+    @JoinColumn(name = "member_id")
+    private Member member;
     @NotNull
     private String deleteUserName;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-
     @Builder
-    public BoardDetailVO( String title, String detail, LocalDateTime createDate, LocalDateTime deleteDate, String createUserName, String deleteUserName) {
+    public BoardDetailVO(String title, String detail, LocalDateTime createDate, LocalDateTime deleteDate, LocalDateTime updateDate, Member createUserName, String deleteUserName) {
         this.title = title;
         this.detail = detail;
         this.createDate = createDate;
         this.deleteDate = deleteDate;
-        this.createUserName = createUserName;
+        this.updateDate = updateDate;
+        this.member = createUserName;
         this.deleteUserName = deleteUserName;
     }
 
-
-
     public BoardDetailVO() {
-
     }
 
-    public void updateBoardDetail(String title, String detail, LocalDateTime updateDate,  String updateUserName){
+    public void updateBoardDetail(String title, String detail, LocalDateTime updateDate,  Member updateUserName){
             this.title=title;
             this.detail=detail;
-            this.createDate=updateDate;
-            this.createUserName=updateUserName;
+            this.updateDate=updateDate;
+            this.member=updateUserName;
     }
 }

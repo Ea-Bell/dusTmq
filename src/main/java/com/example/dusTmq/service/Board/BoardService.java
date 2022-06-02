@@ -5,6 +5,7 @@ import com.example.dusTmq.domain.board.viewDto.BoardDTO;
 import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
 import com.example.dusTmq.domain.user.Member;
 import com.example.dusTmq.repository.board.BoardRepository;
+import com.example.dusTmq.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,22 +26,46 @@ import java.util.Optional;
 public class BoardService implements IBoard{
 
     private final BoardRepository boardDetailRepository;
+    private final MemberRepository memberRepository;
+
+//    @Transactional
+//    @Override
+//    public void boardSave(BoardDTO boardDTO, Member member){
+//
+//        BoardDetailVO boardDetailVO = BoardDetailVO.builder().detail(boardDTO.getDetail())
+//                .title(boardDTO.getTitle())
+//                .createDate(LocalDateTime.now())
+//                .createUserName(member)
+//                .deleteDate(LocalDateTime.of(1900, 01,01,00,00,00))
+//                .deleteUserName("")
+//                .updateDate(LocalDateTime.now())
+//                .build();
+//        boardDetailRepository.save(boardDetailVO);
+//
+//        log.debug("saveBoard={}", boardDetailVO);
+//    }
+
+
 
     @Transactional
     @Override
-    public void boardSave(BoardDTO boardDTO){
+    public void boardSave(BoardDTO boardDTO, String email){
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NullPointerException("Not Email Exist"));
 
         BoardDetailVO boardDetailVO = BoardDetailVO.builder().detail(boardDTO.getDetail())
                 .title(boardDTO.getTitle())
                 .createDate(LocalDateTime.now())
-                .createUserName("김아무개")
+                .createUserName(member)
                 .deleteDate(LocalDateTime.of(1900, 01,01,00,00,00))
                 .deleteUserName("")
+                .updateDate(LocalDateTime.now())
                 .build();
         boardDetailRepository.save(boardDetailVO);
 
         log.debug("saveBoard={}", boardDetailVO);
     }
+
 
     @Override
     @Transactional
@@ -75,7 +100,17 @@ public class BoardService implements IBoard{
     @Override
     public void updateByBoard(Long id, BoardDTO boardDTO) throws Exception {
         BoardDetailVO boardDetailVO = boardDetailRepository.findById(id).orElseThrow(Exception::new);
-        boardDetailVO.updateBoardDetail(boardDTO.getTitle(), boardDTO.getDetail(), LocalDateTime.now(), "아무개씨");
+        boardDetailVO.updateBoardDetail(boardDTO.getTitle(), boardDTO.getDetail(), LocalDateTime.now(), null);
+        log.debug("boardDetailVO={}",boardDetailVO);
+    }
+
+    @Transactional
+    @Override
+    public void updateByBoard(Long id, BoardDTO boardDTO, String email) throws Exception {
+        //게시물이 memberSessionDTO 의 Email이랑 같은지 확인해야함.
+        BoardDetailVO boardDetailVO = boardDetailRepository.findById(id).orElseThrow(() ->new NullPointerException("No BoardData"));
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NullPointerException("No MemberData"));
+        boardDetailVO.updateBoardDetail(boardDTO.getTitle(), boardDTO.getDetail(), LocalDateTime.now(), member);
         log.debug("boardDetailVO={}",boardDetailVO);
     }
 

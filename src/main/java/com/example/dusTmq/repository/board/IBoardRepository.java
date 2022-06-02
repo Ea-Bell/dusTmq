@@ -11,6 +11,9 @@ import java.util.List;
 
 public interface IBoardRepository {
 
-
     public Page<BoardListDTO> pagingBoardListBy(Pageable pageable);
+
+
+
+    boolean matchEmailAndBoardEmailId(String email, Long id);
 }

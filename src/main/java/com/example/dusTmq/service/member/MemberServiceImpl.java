@@ -1,18 +1,18 @@
 package com.example.dusTmq.service.member;
 
 import com.example.dusTmq.common.exception.MemberException;
-import com.example.dusTmq.domain.user.Authority;
 import com.example.dusTmq.domain.user.Member;
-import com.example.dusTmq.domain.user.dto.MemberDTO;
+import com.example.dusTmq.domain.user.MemberDetail;
+import com.example.dusTmq.domain.user.dto.MemberSessionDTO;
 import com.example.dusTmq.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -20,48 +20,39 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
+
     private final MemberRepository memberRepository;
+    private final HttpSession session;
 
     @Transactional
     @Override
-    public void saveUserMember(MemberDTO memberDTO) throws MemberException {
+    public void saveMember(Member member) throws MemberException {
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        memberDTO.setPwd(encoder.encode(memberDTO.getPwd()));
-        boolean duplication = memberRepository.existsByEmail(memberDTO.getEmail());
-
+        boolean duplication = memberRepository.duplicationCheckByMember(member.getRole(), member.getEmail());
         if(!duplication){
-            Member member = Member.builder()
-                    .email(memberDTO.getEmail())
-                    .password(memberDTO.getPwd())
-                    .regDate(LocalDateTime.now())
-                    .updateDate(LocalDateTime.now())
-                    .deleteTime(LocalDateTime.of(1900,01,01,00,00,00))
-                    .username(memberDTO.getName())
-                    .age(memberDTO.getAge())
-                    .gender(memberDTO.getSex())
-                    .auth(Authority.ROLL_USER.toString())
-                    .build();
             memberRepository.save(member);
             log.debug("memberSave={}", member.toString());
-
         }else {
             throw new MemberException("이메일이 중복입니다.");
         }
 
-
+         memberRepository.save(member);
     }
 
-    //스프링이 로그인 요청을 가로챌때 email, password 변수 2개를 가로챘는데
-    // password 부분 처리는 알아서 처리,
-    // email 이 DB에 있는지 확인 여부 필요
+    @Transactional
+    @Override
+    public void updateMemberLastLogin(String email, LocalDateTime localDateTime){
+        memberRepository.updateMemberLastLogin(email, localDateTime);
+    }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(username);
-        if(member == null){
-            throw new UsernameNotFoundException("Not Found account");
-        }
-        return member;
+    @Transactional
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        memberRepository.updateMemberLastLogin(email, LocalDateTime.now());
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Not Found account."));
+
+        session.setAttribute("member", new MemberSessionDTO(member));
+        log.debug("session={}", session.getAttribute("member").toString());
+        return new MemberDetail(member);
     }
 }
