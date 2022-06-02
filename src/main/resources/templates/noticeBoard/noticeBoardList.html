@@ -21,38 +21,24 @@
 
 </head>
 
-
-
-
-
-
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
-
         <!-- Sidebar -->
         <ul th:block th:replace="/common/sideBar :: sideBarFragment"/>
-
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
             <!-- Main Content -->
             <div id="content">
-
                 <!-- TopBar -->
                 <nav th:blcok th:replace="/common/topbar :: topBarFragment"/>
-
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">Tables</h1>
                     <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
                         For more information about DataTables, please visit the <a target="_blank"
                             href="https://datatables.net">official DataTables documentation</a>.</p>
-
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="w-auto p-3  d-flex justify-content-end">
@@ -92,24 +78,20 @@
                                             </tr>
                                         </tbody>
                                     </table>
-<!--                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">-->
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
-
             <!-- Footer -->
             <footer th:replace="/common/footer :: footerFragment"/>
             <!-- End of Footer -->
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
 

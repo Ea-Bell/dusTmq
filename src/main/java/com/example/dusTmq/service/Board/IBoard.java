@@ -3,6 +3,7 @@ package com.example.dusTmq.service.Board;
 import com.example.dusTmq.domain.board.BoardDetailVO;
 import com.example.dusTmq.domain.board.viewDto.BoardDTO;
 import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
+import com.example.dusTmq.domain.user.dto.MemberSessionDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,9 @@ public interface IBoard {
 
     @Transactional
     void boardSave(BoardDTO boardDTO);
+
+    @Transactional
+    void boardSave(BoardDTO boardDTO, String email);
 
     @Transactional
     List<BoardDetailVO> findAllBoard(BoardDetailVO boardDetailVO);
@@ -32,6 +36,9 @@ public interface IBoard {
 
     @Transactional
     void updateByBoard(Long id, BoardDTO boardDTO) throws Exception;
+
+    @Transactional
+    void updateByBoard(Long id, BoardDTO boardDTO, String email) throws Exception;
 
     @Transactional
     void deleteByBoard(Long id);

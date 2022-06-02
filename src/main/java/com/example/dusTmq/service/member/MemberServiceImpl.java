@@ -51,7 +51,6 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.updateMemberLastLogin(email, LocalDateTime.now());
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Not Found account."));
 
-        log.debug("member={}",member.toString());
         session.setAttribute("member", new MemberSessionDTO(member));
         log.debug("session={}", session.getAttribute("member").toString());
         return new MemberDetail(member);

@@ -35,11 +35,32 @@ public class BoardService implements IBoard{
                 .createUserName("김아무개")
                 .deleteDate(LocalDateTime.of(1900, 01,01,00,00,00))
                 .deleteUserName("")
+                .updateDate(LocalDateTime.now())
                 .build();
         boardDetailRepository.save(boardDetailVO);
 
         log.debug("saveBoard={}", boardDetailVO);
     }
+
+
+
+    @Transactional
+    @Override
+    public void boardSave(BoardDTO boardDTO, String email){
+
+        BoardDetailVO boardDetailVO = BoardDetailVO.builder().detail(boardDTO.getDetail())
+                .title(boardDTO.getTitle())
+                .createDate(LocalDateTime.now())
+                .createUserName(email)
+                .deleteDate(LocalDateTime.of(1900, 01,01,00,00,00))
+                .deleteUserName("")
+                .updateDate(LocalDateTime.now())
+                .build();
+        boardDetailRepository.save(boardDetailVO);
+
+        log.debug("saveBoard={}", boardDetailVO);
+    }
+
 
     @Override
     @Transactional
@@ -75,6 +96,15 @@ public class BoardService implements IBoard{
     public void updateByBoard(Long id, BoardDTO boardDTO) throws Exception {
         BoardDetailVO boardDetailVO = boardDetailRepository.findById(id).orElseThrow(Exception::new);
         boardDetailVO.updateBoardDetail(boardDTO.getTitle(), boardDTO.getDetail(), LocalDateTime.now(), "아무개씨");
+        log.debug("boardDetailVO={}",boardDetailVO);
+    }
+
+    @Transactional
+    @Override
+    public void updateByBoard(Long id, BoardDTO boardDTO, String email) throws Exception {
+        //게시물이 memberSessionDTO 의 Email이랑 같은지 확인해야함.
+        BoardDetailVO boardDetailVO = boardDetailRepository.findById(id).orElseThrow(() ->new NullPointerException("No BoardData"));
+        boardDetailVO.updateBoardDetail(boardDTO.getTitle(), boardDTO.getDetail(), LocalDateTime.now(), email);
         log.debug("boardDetailVO={}",boardDetailVO);
     }
 

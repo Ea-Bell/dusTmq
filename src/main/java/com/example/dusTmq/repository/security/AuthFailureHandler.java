@@ -1,4 +1,4 @@
-package com.example.dusTmq.security;
+package com.example.dusTmq.repository.security;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;

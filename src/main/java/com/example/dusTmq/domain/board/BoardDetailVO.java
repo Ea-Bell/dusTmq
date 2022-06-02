@@ -36,15 +36,11 @@ public class BoardDetailVO {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateDate;
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Member.class)
+    @JoinColumn(name = "email")
     private String createUserName;
     @NotNull
     private String deleteUserName;
-
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id")
-//    private Member member;
-
 
     @Builder
     public BoardDetailVO(String title, String detail, LocalDateTime createDate, LocalDateTime deleteDate, LocalDateTime updateDate, String createUserName, String deleteUserName) {

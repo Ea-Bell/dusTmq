@@ -54,14 +54,14 @@ public class NoticeBoard {
             return noticeBoardAdd;
         }
 
-        boardService.boardSave(boardDTO);
+        boardService.boardSave(boardDTO, member.getEmail());
         return "redirect:/noticeBoard";
     }
 
 
 
     @GetMapping("/{id}")
-    public String boardEdit(@PathVariable("id") long id, Model mv) throws Exception {
+    public String boardEdit(@PathVariable("id") long id, HttpServletRequest request,  Model mv) throws Exception {
         //최적화 필요 "필요 없는 데이터까지 가지고옴"
         Optional<BoardDetailVO> byIdBoard = boardService.getByIdBoard(id);
         BoardDetailVO boardDetailVO= byIdBoard.orElseThrow(Exception :: new);
@@ -77,7 +77,12 @@ public class NoticeBoard {
     }
 
     @PostMapping("/{id}")
-    public String boardEdit(@ModelAttribute("boardDTO") @Validated BoardDTO boardDTO, BindingResult bindingResult,@PathVariable("id") long id, Model mv) throws Exception {
+    public String boardEdit(@ModelAttribute("boardDTO") @Validated BoardDTO boardDTO, BindingResult bindingResult,@PathVariable("id") long id, HttpServletRequest request, Model mv) throws Exception {
+        HttpSession session = request.getSession();
+        MemberSessionDTO memberSessionDTO = (MemberSessionDTO) session.getAttribute("member");
+
+        log.debug("memberSessionDTO={}", memberSessionDTO.toString());
+
         if(bindingResult.hasErrors()){
             Message errorMsg = boardError(bindingResult);
             mv.addAttribute("errorMsg", errorMsg);
