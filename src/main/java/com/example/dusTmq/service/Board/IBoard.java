@@ -37,9 +37,6 @@ public interface IBoard {
     void updateByBoard(Long id, BoardDTO boardDTO) throws Exception;
 
     @Transactional
-    void updateByBoard(Long id, BoardDTO boardDTO, String email) throws Exception;
-
-    @Transactional
     void deleteByBoard(Long id);
 
     @Transactional

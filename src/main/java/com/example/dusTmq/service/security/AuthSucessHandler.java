@@ -1,4 +1,4 @@
-package com.example.dusTmq.security;
+package com.example.dusTmq.service.security;
 
 import com.example.dusTmq.repository.member.MemberRepository;
 import com.example.dusTmq.service.member.MemberService;
