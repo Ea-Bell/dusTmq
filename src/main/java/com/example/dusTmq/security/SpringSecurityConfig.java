@@ -1,7 +1,8 @@
-package com.example.dusTmq.service.security;
+package com.example.dusTmq.security;
 
 
 import com.example.dusTmq.service.member.MemberService;
+import com.example.dusTmq.utill.UtilConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final static String [] ADMIN_WHITELIST = {"/admin/**"};
     private final static String[] PERMIT_ALL_WHITELIST = {"/css/**", "/js/**", "/img/**","/error","/favicon.ico","/vendor/**","/scss/**","/login/**","/register"};
 
+    private final UtilConfig config;
     @Bean
     public BCryptPasswordEncoder encryptPassword(){
         return new BCryptPasswordEncoder();
@@ -96,7 +98,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers()
                 .xssProtection()
                 .and()
-                .contentSecurityPolicy("script-src 'self' 'nonce-rAnd0m';")
+                .contentSecurityPolicy("script-src 'self' 'nonce-"+config.getNonce()+"';")
         ;
     }
 
