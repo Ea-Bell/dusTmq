@@ -23,11 +23,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final MemberService memberService;
     private final AuthSucessHandler authSucessHandler;
     private final AuthFailureHandler authFailureHandler;
+    private final UtilConfig config;
     private final static String[] USER_WHITELIST = {"/","/user/**", "/noticeBoard/**"};
     private final static String [] ADMIN_WHITELIST = {"/admin/**"};
     private final static String[] PERMIT_ALL_WHITELIST = {"/css/**", "/js/**", "/img/**","/error","/favicon.ico","/vendor/**","/scss/**","/login/**","/register"};
 
-    private final UtilConfig config;
     @Bean
     public BCryptPasswordEncoder encryptPassword(){
         return new BCryptPasswordEncoder();
@@ -98,7 +98,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers()
                 .xssProtection()
                 .and()
-                .contentSecurityPolicy("script-src 'self' 'nonce-"+config.getNonce()+"';")
+                .contentSecurityPolicy("script-src 'self' 'nonce-"+config.getNonce()+"';") //script에 대해 nonce의 값이 없으면 보안 정책에러
         ;
     }
 
