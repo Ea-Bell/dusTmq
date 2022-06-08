@@ -1,10 +1,12 @@
 package com.example.dusTmq.domain.board.viewDto;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
+@ToString
 public class BoardDTO {
     @NotBlank(message = "title값을 넣어주세요")
     private String title;

@@ -66,7 +66,6 @@ public class BoardService implements IBoard{
         log.debug("saveBoard={}", boardDetailVO);
     }
 
-
     @Override
     @Transactional
     public List<BoardDetailVO> findAllBoard(BoardDetailVO boardDetailVO){
@@ -100,17 +99,7 @@ public class BoardService implements IBoard{
     @Override
     public void updateByBoard(Long id, BoardDTO boardDTO) throws Exception {
         BoardDetailVO boardDetailVO = boardDetailRepository.findById(id).orElseThrow(Exception::new);
-        boardDetailVO.updateBoardDetail(boardDTO.getTitle(), boardDTO.getDetail(), LocalDateTime.now(), null);
-        log.debug("boardDetailVO={}",boardDetailVO);
-    }
-
-    @Transactional
-    @Override
-    public void updateByBoard(Long id, BoardDTO boardDTO, String email) throws Exception {
-        //게시물이 memberSessionDTO 의 Email이랑 같은지 확인해야함.
-        BoardDetailVO boardDetailVO = boardDetailRepository.findById(id).orElseThrow(() ->new NullPointerException("No BoardData"));
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new NullPointerException("No MemberData"));
-        boardDetailVO.updateBoardDetail(boardDTO.getTitle(), boardDTO.getDetail(), LocalDateTime.now(), member);
+        boardDetailVO.updateBoardDetail(boardDTO.getTitle(), boardDTO.getDetail(), LocalDateTime.now(), boardDetailVO.getMember());
         log.debug("boardDetailVO={}",boardDetailVO);
     }
 
