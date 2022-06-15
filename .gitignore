@@ -42,6 +42,6 @@ application-oauth.properties
 config.properties
 ### TestFile ###
 /src/test
-
+/src/todoFile
 ### out ###
 /out/test

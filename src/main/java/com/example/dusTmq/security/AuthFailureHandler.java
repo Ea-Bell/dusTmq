@@ -1,5 +1,6 @@
 package com.example.dusTmq.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
@@ -12,11 +13,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 @Component
+@Slf4j
 public class AuthFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+            log.debug("AuthFailureHandler.onAuthenticationFailure()");
+
         String msg = "Invalid Email or Password";
 
         //exception 관련 메시지 처리

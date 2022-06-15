@@ -3,6 +3,7 @@ package com.example.dusTmq.controller.noticeBoard;
 import com.example.dusTmq.common.Message;
 import com.example.dusTmq.common.StatusEnum;
 import com.example.dusTmq.common.exception.CommonException;
+import com.example.dusTmq.common.exception.ErrorResult;
 import com.example.dusTmq.domain.board.BoardDetailVO;
 import com.example.dusTmq.domain.board.viewDto.BoardDTO;
 import com.example.dusTmq.domain.user.Member;
@@ -10,6 +11,8 @@ import com.example.dusTmq.domain.user.dto.MemberSessionDTO;
 import com.example.dusTmq.service.Board.IBoard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,9 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+
 
 import static com.example.dusTmq.common.Message.getMessage;
 
@@ -76,7 +78,9 @@ public class NoticeBoard {
         return noticeBoard;
     }
     @GetMapping("/modify/{id}")
-    public String boardEdit(@PathVariable("id") long id, HttpServletRequest request,  Model mv) throws Exception {
+    public String boardEdit(@PathVariable("id") long id, HttpServletRequest request,  Model mv) throws CommonException {
+        log.debug("NoticeBoard.boardEdit()");
+        Map<String, Object>result = new HashMap<>();
         //최적화 필요 "필요 없는 데이터까지 가지고옴"
         BoardDetailVO boardDetailVO = boardService.getByIdBoard(id).orElseThrow(() -> new NoSuchElementException("Not Found Account"));
         HttpSession session = request.getSession();
@@ -91,7 +95,10 @@ public class NoticeBoard {
 
         //비교해서 맞는 아이디면 수정으로 넘어가고 아니면 "인증되어지지 않는 유저입니다."라는 문구를 띄우자.
         if(!boardDetailVO.getMember().getEmail().equals(member.getEmail())){
-            log.error("It is not an authenticated user.");
+            Message errorMsg = boardError(boardDTO);
+            result.put("errorMsg", errorMsg);
+            mv.addAttribute("errorMsg", errorMsg);
+            log.debug("mv={}", mv.toString());
             return noticeBoard;
         }
             return noticeBoardEdit;
@@ -128,5 +135,10 @@ public class NoticeBoard {
     private Message boardError(BindingResult bindingResult) {
         return getMessage(bindingResult, log);
     }
+
+    private Message boardError(BoardDTO boardDTO){
+        return getMessage(boardDTO, log);
+    }
     //공통처리할 bindingResult.hasErrors()를 처리할 방법을 생각해야함.
+
 }
