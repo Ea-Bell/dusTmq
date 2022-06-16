@@ -24,8 +24,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
-import static com.example.dusTmq.common.Message.getMessage;
 
 @RestController
 @Slf4j
@@ -40,10 +41,17 @@ public class mainController {
     private String path = "/noticeBoard";
     @GetMapping("/noticeBoard")
     public ModelAndView tables(@PageableDefault(size = 100000, sort = "id", direction = Sort.Direction.DESC ) Pageable pageable){
+        Message message = new Message();
+        Map<String, Object> resultMap = new HashMap<>();
         ModelAndView mv = new ModelAndView();
         Page<BoardListDTO> boardListDTOS = boardService.pagingBoardListBy(pageable);
-        mv.addObject("boardListDTOS", boardListDTOS);
+
+        message.setData(boardListDTOS);
+        resultMap.put("message", message);
+
+        mv.addObject("result", resultMap);
         mv.setViewName("/noticeBoard/noticeBoardList");
+        log.debug("ModelAndView = {}", mv.toString());
         return mv;
     }
 

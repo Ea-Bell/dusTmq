@@ -72,7 +72,7 @@
                                         </tfoot>
                                         <tbody >
                                             <!--테이터를 넣을곳 -->
-                                            <tr th:id="resultTr" th:each="result : ${boardListDTOS}">
+                                            <tr th:id="resultTr" th:each="result : ${result.message.data}">
                                                 <th>
                                                     <div th:class="checkbox"><label>
                                                     <input type="checkbox" th:name="checkbox" th:id="checkbox" th:class="check" th:value="${result.id}">

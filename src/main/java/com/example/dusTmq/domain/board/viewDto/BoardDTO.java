@@ -12,4 +12,9 @@ public class BoardDTO {
     private String title;
     @NotBlank(message = "detail값을 넣어 주세요")
     private String detail;
+
+    public BoardDTO() {
+        this.title = "";
+        this.detail = "";
+    }
 }

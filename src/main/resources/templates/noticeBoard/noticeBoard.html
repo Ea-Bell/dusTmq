@@ -103,7 +103,7 @@
                 </div>
             </div>
 <!--            <p th:errorclass="filed-error" th:if="${errorMsg.getStatus()} == '400'">asdfasdfasdfsad</p>-->
-            <p th:text="${errorMsg.status}">ddd</p>
+
 <!--            <p th:errorclass="filed-error" th:errors="${errorMsg.status.toString().equals('BAD_REQUEST')}" th:text="에러입니당+'!'"></p>-->
             <!-- /.container-fluid -->
             <!-- End of Main Content -->
@@ -163,19 +163,20 @@
     //
     //
     // })
-
 </script>
-<th:block th:if="${#strings.equals(errorMsg.status,'null')}">
-    <script th:nonce = "#{javascript_nonce}">
 
-    </script>
-</th:block>
 
-<th:block th:if="${#strings.equals(errorMsg.status,'BAD_REQUEST')}">
-    <script th:nonce = "#{javascript_nonce}">
-        alert("잘못된 인증 사용자 입니다.")
-    </script>
-</th:block>
+<!--<th:block th:if="${#strings.equals(errorMsg.status,'null')}">-->
+<!--    <script th:nonce = "#{javascript_nonce}">-->
+
+<!--    </script>-->
+<!--</th:block>-->
+
+<!--<th:block th:if="${#strings.equals(errorMsg.status,'BAD_REQUEST')}">-->
+<!--    <script th:nonce = "#{javascript_nonce}">-->
+<!--        alert("잘못된 인증 사용자 입니다.")-->
+<!--    </script>-->
+<!--</th:block>-->
 
 
 </body>

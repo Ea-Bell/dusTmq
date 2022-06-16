@@ -20,13 +20,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
 
-import static com.example.dusTmq.common.Message.getMessage;
 
 @Controller
 @Slf4j
@@ -39,23 +39,38 @@ public class NoticeBoard {
     private final static String noticeBoardEdit = "/noticeBoard/noticeBoardEdit";
     private final static String noticeBoard = "/noticeBoard/noticeBoard";
     private final static String noticeBoardAdd = "/noticeBoard/noticeBoardRegister";
-
+    @ResponseBody
     @GetMapping("/noticeBoardRegister")
-    public String boardAdd(Model mv, HttpServletRequest request){
+    public ModelAndView boardAdd(){
+        ModelAndView mv = new ModelAndView();
+        log.debug("NoticeBoard.boardAdd()");
+        Message message = new Message();
+        Map<String, Object> result = new HashMap<>();
         BoardDTO boardDTO = new BoardDTO();
-        mv.addAttribute(boardDTO);
-        return noticeBoardAdd;
+
+        message.setData(boardDTO);
+        result.put("message", message);
+
+        mv.addObject("result", result);
+        mv.setViewName(noticeBoardAdd);
+        log.debug("ModelAndView = {}", mv.toString());
+        return mv;
     }
     @PostMapping(value = "/noticeBoardRegister")
     public String boardAdd(@Validated @ModelAttribute("boardDTO") BoardDTO boardDTO, BindingResult bindingResult, HttpServletRequest request, Model mv) throws CommonException {
-
+        Message message = new Message();
         HttpSession session = request.getSession();
         MemberSessionDTO member = (MemberSessionDTO) session.getAttribute("member"); //캐스캐이팅 조심
-        log.debug("session={}",member.toString());
-
+        Map<String, Object> resultMap = new HashMap<>();
         if(bindingResult.hasErrors()){
-            Message errorMsg = boardError(bindingResult);
-            mv.addAttribute("errorMsg", errorMsg);
+            FieldError fieldError = bindingResult.getFieldError();
+            message.setMessage(fieldError.getDefaultMessage());
+            message.setStatus(StatusEnum.BAD_REQUEST);
+            boardAddBlackCheck(boardDTO, message, fieldError);
+
+            resultMap.put("message", message);
+            mv.addAttribute("result", resultMap);
+            log.debug("resultMap.toString={}", resultMap.toString());
             return noticeBoardAdd;
         }
 
@@ -63,29 +78,48 @@ public class NoticeBoard {
         return "redirect:/noticeBoard";
     }
 
+    private void boardAddBlackCheck(BoardDTO boardDTO, Message message, FieldError fieldError) {
+        if(boardDTO.getDetail()=="" && boardDTO.getTitle()==""){
+            boardDTO.setDetail("title값을 넣어주세요");
+            boardDTO.setTitle("detail값을 넣어 주세요");
+        }
+        else if(boardDTO.getDetail()=="" && boardDTO.getTitle()!="" ){
+            boardDTO.setDetail(fieldError.getDefaultMessage());
+        }
+        else if( boardDTO.getDetail()!="" && boardDTO.getTitle()=="" ){
+            boardDTO.setTitle(fieldError.getDefaultMessage());
+        }
+        message.setData(boardDTO);
+    }
+
     @GetMapping("/{id}")
-    public String boardDetail(@PathVariable("id") long id, HttpServletRequest request,  Model mv) throws Exception {
+    public String boardDetail(@PathVariable("id") long id, HttpServletRequest request,  Model mv) throws CommonException {
+        Message message = new Message();
+        Map<String, Object> resultMap = new HashMap<>();
+
         //최적화 필요 "필요 없는 데이터까지 가지고옴"
         BoardDetailVO boardDetailVO = boardService.getByIdBoard(id).orElseThrow(() -> new NoSuchElementException("Not Found Account"));
-
         BoardDTO boardDTO = new BoardDTO();
         boardDTO.setTitle(boardDetailVO.getTitle());
         boardDTO.setDetail(boardDetailVO.getDetail());
 
-        mv.addAttribute("boardDTO", boardDTO);
-        mv.addAttribute("id",id);
+        resultMap.put("id", id);
+        resultMap.put("boardDTO", boardDTO);
 
+        message.setData(resultMap);
+        mv.addAttribute("result", message);
         return noticeBoard;
     }
     @GetMapping("/modify/{id}")
     public String boardEdit(@PathVariable("id") long id, HttpServletRequest request,  Model mv) throws CommonException {
         log.debug("NoticeBoard.boardEdit()");
-        Map<String, Object>result = new HashMap<>();
-        //최적화 필요 "필요 없는 데이터까지 가지고옴"
-        BoardDetailVO boardDetailVO = boardService.getByIdBoard(id).orElseThrow(() -> new NoSuchElementException("Not Found Account"));
         HttpSession session = request.getSession();
         MemberSessionDTO member = (MemberSessionDTO) session.getAttribute("member");
 
+        Map<String, Object>result = new HashMap<>();
+
+        //최적화 필요 "필요 없는 데이터까지 가지고옴"
+        BoardDetailVO boardDetailVO = boardService.getByIdBoard(id).orElseThrow(() -> new NoSuchElementException("Not Found Account"));
         BoardDTO boardDTO = new BoardDTO();
         boardDTO.setTitle(boardDetailVO.getTitle());
         boardDTO.setDetail(boardDetailVO.getDetail());
@@ -95,9 +129,6 @@ public class NoticeBoard {
 
         //비교해서 맞는 아이디면 수정으로 넘어가고 아니면 "인증되어지지 않는 유저입니다."라는 문구를 띄우자.
         if(!boardDetailVO.getMember().getEmail().equals(member.getEmail())){
-            Message errorMsg = boardError(boardDTO);
-            result.put("errorMsg", errorMsg);
-            mv.addAttribute("errorMsg", errorMsg);
             log.debug("mv={}", mv.toString());
             return noticeBoard;
         }
@@ -110,8 +141,6 @@ public class NoticeBoard {
         MemberSessionDTO memberSessionDTO = (MemberSessionDTO) session.getAttribute("member");
 
         if(bindingResult.hasErrors()){
-            Message errorMsg = boardError(bindingResult);
-            mv.addAttribute("errorMsg", errorMsg);
             return noticeBoardEdit;
         }
         boardService.updateByBoard(id, boardDTO);
@@ -132,13 +161,7 @@ public class NoticeBoard {
         return "redirect:/noticeBoard";
     }
 
-    private Message boardError(BindingResult bindingResult) {
-        return getMessage(bindingResult, log);
-    }
 
-    private Message boardError(BoardDTO boardDTO){
-        return getMessage(boardDTO, log);
-    }
     //공통처리할 bindingResult.hasErrors()를 처리할 방법을 생각해야함.
 
 }
