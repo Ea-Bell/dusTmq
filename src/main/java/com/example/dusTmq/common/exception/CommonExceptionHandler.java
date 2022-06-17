@@ -28,23 +28,23 @@ public class CommonExceptionHandler {
     public final static String REDIRECT_ERROR400 = "redirect:/error-400";
     public final static String REDIRECT_ERROR404 = "redirect:/error-404";
 //    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(CommonException.class)
-    public String intervalServerError(CommonException commonException){
-        log.debug("CommonExceptionHandler.intervalServerError()");
-        BoardDTO boardDTO = new BoardDTO();
-        ErrorResult errorResult= new ErrorResult();
-        errorResult.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        errorResult.setMessage(commonException.getMessage());
-        log.error("exceptionHandler ex={}",errorResult);
+//    @ExceptionHandler(CommonException.class)
+//    public String intervalServerError(CommonException commonException){
+//        log.debug("CommonExceptionHandler.intervalServerError()");
+//        BoardDTO boardDTO = new BoardDTO();
+//        ErrorResult errorResult= new ErrorResult();
+//        errorResult.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+//        errorResult.setMessage(commonException.getMessage());
+//        log.error("exceptionHandler ex={}",errorResult);
+////        Model mv = null;
+////        mv.addAttribute("errorResult", errorResult);
+////        mv.addAttribute("boardDTO", boardDTO);
 //        Model mv = null;
-//        mv.addAttribute("errorResult", errorResult);
+//
 //        mv.addAttribute("boardDTO", boardDTO);
-        Model mv = null;
-
-        mv.addAttribute("boardDTO", boardDTO);
-        
-        return "/noticeBoard/noticeBoardEdit";
-    }
+//
+//        return "/noticeBoard/noticeBoardEdit";
+//    }
 
     @ExceptionHandler(NoSuchElementException.class)
     public String noticeBoardError(NoSuchElementException error){

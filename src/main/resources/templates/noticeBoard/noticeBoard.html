@@ -19,6 +19,16 @@
         textarea{
             resize: none;
         }
+        input, textarea{
+            width: 100%;
+            height: 100%;
+        }
+        .td-detail{
+            height:  50vh;
+        }
+        .span-text{
+            white-space: nowrap;
+        }
         input::placeholder {
             color: red;
             font-style: italic;
@@ -27,19 +37,41 @@
             color: red;
             font-weight: bold;
         }
-        .th-Width{
-            width: 10%;
-        }
-        .textarea-WH{
-            width: inherit;
-            height: 250%;
-        }
-        .input-width{
-            width: 100%;
-        }
-        .filed-error{
-            color: #1cc88a;
-        }
+
+        /*.CommentWriter {*/
+        /*    margin: 12px 0 29px;*/
+        /*    padding: 16px 10px 10px 18px;*/
+        /*    border: 2px solid #b7b7b7;*/
+        /*    border-radius: 6px;*/
+        /*    box-sizing: border-box;*/
+        /*    background: #ffffff;*/
+        /*}*/
+        /*.CommentWriter .comment_inbox {*/
+        /*    position: relative;*/
+        /*    margin-bottom: 10px;*/
+        /*}*/
+        /*.CommentBox .comment_list+.CommentWriter {*/
+        /*    margin-top: 10px;*/
+        /*}*/
+        /*.CommentWriter .comment_attach {*/
+        /*    position: relative;*/
+        /*}*/
+        /*.CommentWriter .register_box .button {*/
+        /*    display: inline-block;*/
+        /*    min-width: 46px;*/
+        /*    height: 34px;*/
+        /*    line-height: 36px;*/
+        /*    font-size: 13px;*/
+        /*    color: #b7b7b7;;*/
+        /*    border-radius: 6px;*/
+        /*    box-sizing: border-box;*/
+        /*    font-weight: 700;*/
+        /*    text-align: center;*/
+        /*    vertical-align: top;*/
+        /*}*/
+        /*div{*/
+        /*    display: none;*/
+        /*}*/
     </style>
 </head>
 
@@ -66,45 +98,125 @@
             <!-- Begin Page Content -->
 
             <div class="container">
-
                 <!-- Page Heading -->
-                <h1 class="h3 mb-1 m-5 text-gray-800">게시글 작성하기</h1>
+                <h1 class="h3 mb-1 m-5 text-gray-800" th:align="center">게시글 제목을 요기다가 해야함</h1>
                 <div class="w-auto p-3  d-flex justify-content-end">
                     <button type="submit"  th:form="fromData" th:formaction="@{/noticeBoard/modify/{id}(id= ${id})}" formmethod="get" class="btn btn-primary m-1"><span style="color: white">수정</span></button>
                     <button type="submit"  th:form="fromData" th:formaction="@{/noticeBoard/delete/{id}(id= ${id})}" formmethod="post" class="btn btn-danger m-1 ">삭제</button>
                 </div>
-
                 <!-- Content Row -->
                 <div class="row">
                     <div th:class="col">
-                    <form th:name="fromData" th:id="fromData">
-                        <!--table -->
-                        <table class="table" th:object="${boardDTO}" >
-                            <thead>
-                            <tr>
-                                <th scope="row" colspan="4">게시글작성</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <th  th:class="th-Width">제목</th>
-                                <td >
-                                    <input type="text" th:field="*{title}" th:class="input-width" th:errorclass="error-input" placeholder="제목을 입력해주세요" th:disabled="none">
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>내용</th>
-                                <td class="w-100" style="height: 10em"><textarea th:field="*{detail}"  th:class="textarea-WH"  placeholder="내용을 입력해주세요" th:disabled="none"></textarea></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </form>
+                        <form th:name="fromData" th:id="fromData">
+                            <!--table -->
+                            <table class="table" th:object="${boardDTO}" >
+                                <tbody>
+                                <tr>
+                                    <th><span th:class="span-text">제목</span></th>
+                                    <td>
+                                        <input type="text" th:field="*{title}"  placeholder="제목을 입력해주세요" th:disabled="none">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><span th:class="span-text">내용</span></th>
+                                    <td class="td-detail"><textarea th:field="*{detail}" placeholder="내용을 입력해주세요" th:disabled="none"></textarea></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
                     </div>
                 </div>
             </div>
-<!--            <p th:errorclass="filed-error" th:if="${errorMsg.getStatus()} == '400'">asdfasdfasdfsad</p>-->
 
-<!--            <p th:errorclass="filed-error" th:errors="${errorMsg.status.toString().equals('BAD_REQUEST')}" th:text="에러입니당+'!'"></p>-->
+
+            <div class="card mt-2">
+               <div class="card-header p-2">
+                    <table>
+                        <tbody>
+                        <tr class="align-middle">
+                            <td rowspan="2" class="pr-2">
+                                <i class="fa fa-user-o fa-2x">
+
+                                </i>
+                            </td>
+                            <td class="m1">테스트</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <font size="2">2022-01-01 01:01:01</font>
+                                <span style="cursor:pointer" onclick="javascript:showDeleteReplyModal(176, 162);">
+                                    <i class="fa fa-window-close fa" aria-hidden="true">
+
+                                    </i>
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+               </div>
+                <div class="card-body">
+                    <p class="card-text">asdfasdfasdfasdf</p>
+                    <span class="badge badge-dark" style="cursor:pointer">
+                        <a onclick="javascript:showReReplyArea(176,162);">답글</a>
+                    </span>
+                </div>
+            </div>
+
+            <div class="card mt-2">
+                <div class="card-header p-2">
+                    <table>
+                        <tbody>
+                        <tr class="align-middle">
+                            <td rowspan="2" class="pr-2">
+                                <i class="fa fa-user-o fa-2x">
+
+                                </i>
+                            </td>
+                            <td class="m1">테스트</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <font size="2">2022-01-01 01:01:01</font>
+                                <span style="cursor:pointer" onclick="javascript:showDeleteReplyModal(176, 162);">
+                                    <i class="fa fa-window-close fa" aria-hidden="true">
+
+                                    </i>
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">asdfasdfasdfasdf</p>
+                    <span class="badge badge-dark" style="cursor:pointer">
+                        <a onclick="javascript:showReReplyArea(176,162);">답글</a>
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="card mb-2">
+            <div class="card-header bg-light">
+                <i class="fa fa-comment fa"></i> REPLY
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="form-inline mb-2">
+                            <label for="replyId"><i class="fa fa-user-circle-o fa-2x"></i></label>
+                            <input type="text" class="form-control ml-2" placeholder="Enter yourId" id="replyId">
+                            <label for="replyPassword" class="ml-4"><i class="fa fa-unlock-alt fa-2x"></i></label>
+                            <input type="password" class="form-control ml-2" placeholder="Enter password" id="replyPassword">
+                        </div>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        <button type="button" class="btn btn-dark mt-3" onClick="javascript:addReply();">post reply</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
             <!-- /.container-fluid -->
             <!-- End of Main Content -->
 

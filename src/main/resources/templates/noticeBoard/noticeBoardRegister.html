@@ -38,7 +38,7 @@
     .input-width{
       width: 100%;
     }
-    p{
+    textarea::placeholder, input::placeholder{
       color: red;
     }
   </style>
@@ -75,7 +75,6 @@
         <div class="w-auto p-3  d-flex justify-content-end">
           <button type="submit"  th:form="fromData"  formaction="/noticeBoard/noticeBoardRegister" formmethod="post" class="btn btn-primary m-1"><span style="color: white">작성</span></button>
         </div>
-
         <!-- Content Row -->
         <div class="row">
           <div th:class="col">
@@ -92,15 +91,13 @@
               <tr>
                 <th th:class="th-Width">제목</th>
                 <td>
-                  <input type="text" th:id="title" th:name="title" th:value="${result.data.title}"  th:class="input-width" placeholder="제목을 입력해주세요">
-                  <p>input</p>
+                  <input type="text" th:id="title" th:name="title" th:placeholder="${result.data.title}"  th:class="input-width" placeholder="제목을 입력해주세요">
                 </td>
               </tr>
               <tr>
                 <th>내용</th>
                 <td class="w-100" style="height: 10em">
-                  <textarea th:id="detail" th:name="detail" th:text="${result.data.detail}" th:class="textarea-WH"  placeholder="내용을 입력해주세요"/>
-                  <p>textarea</p>
+                  <textarea th:id="detail" th:name="detail" th:placeholder="${result.data.detail}" th:class="textarea-WH"></textarea>
                 </td>
               </tr>
               </tbody>

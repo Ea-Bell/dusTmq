@@ -28,7 +28,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthSucessHandler authSucessHandler;
     private final AuthFailureHandler authFailureHandler;
     private final UtilConfig config;
-    private final static String[] USER_WHITELIST = {"/","/user/**", "/noticeBoard/**","/static"};
+    private final static String[] USER_WHITELIST = {"/user/**", "/noticeBoard/**","/static"};
     private final static String [] ADMIN_WHITELIST = {"/admin/**", };
     private final static String[] PERMIT_ALL_WHITELIST = {"/css/**", "/js/**", "/img/**","/error/**","/favicon.ico","/vendor/**","/scss/**","/login/**","/register"};
     @Bean

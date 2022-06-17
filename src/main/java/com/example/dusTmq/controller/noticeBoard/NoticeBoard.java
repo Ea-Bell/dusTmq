@@ -3,17 +3,17 @@ package com.example.dusTmq.controller.noticeBoard;
 import com.example.dusTmq.common.Message;
 import com.example.dusTmq.common.StatusEnum;
 import com.example.dusTmq.common.exception.CommonException;
-import com.example.dusTmq.common.exception.ErrorResult;
 import com.example.dusTmq.domain.board.BoardDetailVO;
 import com.example.dusTmq.domain.board.viewDto.BoardDTO;
-import com.example.dusTmq.domain.user.Member;
+import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
 import com.example.dusTmq.domain.user.dto.MemberSessionDTO;
 import com.example.dusTmq.service.Board.IBoard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,7 +28,7 @@ import java.util.*;
 
 
 
-@Controller
+@RestController
 @Slf4j
 @RequestMapping("/noticeBoard")
 @RequiredArgsConstructor
@@ -39,7 +39,22 @@ public class NoticeBoard {
     private final static String noticeBoardEdit = "/noticeBoard/noticeBoardEdit";
     private final static String noticeBoard = "/noticeBoard/noticeBoard";
     private final static String noticeBoardAdd = "/noticeBoard/noticeBoardRegister";
-    @ResponseBody
+
+    @GetMapping
+    public ModelAndView tables(@PageableDefault(size = 100000, sort = "id", direction = Sort.Direction.DESC ) Pageable pageable){
+        Message message = new Message();
+        Map<String, Object> resultMap = new HashMap<>();
+        ModelAndView mv = new ModelAndView();
+        Page<BoardListDTO> boardListDTOS = boardService.pagingBoardListBy(pageable);
+
+        message.setData(boardListDTOS);
+        resultMap.put("message", message);
+
+        mv.addObject("result", resultMap);
+        mv.setViewName("/noticeBoard/noticeBoardList");
+        return mv;
+    }
+
     @GetMapping("/noticeBoardRegister")
     public ModelAndView boardAdd(){
         ModelAndView mv = new ModelAndView();
@@ -53,11 +68,10 @@ public class NoticeBoard {
 
         mv.addObject("result", result);
         mv.setViewName(noticeBoardAdd);
-        log.debug("ModelAndView = {}", mv.toString());
         return mv;
     }
     @PostMapping(value = "/noticeBoardRegister")
-    public String boardAdd(@Validated @ModelAttribute("boardDTO") BoardDTO boardDTO, BindingResult bindingResult, HttpServletRequest request, Model mv) throws CommonException {
+    public ModelAndView boardAdd(@Validated @ModelAttribute("boardDTO") BoardDTO boardDTO, BindingResult bindingResult, HttpServletRequest request, ModelAndView mv) throws CommonException {
         Message message = new Message();
         HttpSession session = request.getSession();
         MemberSessionDTO member = (MemberSessionDTO) session.getAttribute("member"); //캐스캐이팅 조심
@@ -66,19 +80,20 @@ public class NoticeBoard {
             FieldError fieldError = bindingResult.getFieldError();
             message.setMessage(fieldError.getDefaultMessage());
             message.setStatus(StatusEnum.BAD_REQUEST);
-            boardAddBlackCheck(boardDTO, message, fieldError);
+            boardAddBlankCheck(boardDTO, message, fieldError);
 
             resultMap.put("message", message);
-            mv.addAttribute("result", resultMap);
+            mv.addObject("result", resultMap);
+            mv.setViewName(noticeBoardAdd);
             log.debug("resultMap.toString={}", resultMap.toString());
-            return noticeBoardAdd;
+            return mv;
         }
-
         boardService.boardSave(boardDTO, member.getEmail());
-        return "redirect:/noticeBoard";
+        mv.setViewName("redirect:/noticeBoard");
+        return mv;
     }
 
-    private void boardAddBlackCheck(BoardDTO boardDTO, Message message, FieldError fieldError) {
+    private void boardAddBlankCheck(BoardDTO boardDTO, Message message, FieldError fieldError) {
         if(boardDTO.getDetail()=="" && boardDTO.getTitle()==""){
             boardDTO.setDetail("title값을 넣어주세요");
             boardDTO.setTitle("detail값을 넣어 주세요");
@@ -93,7 +108,7 @@ public class NoticeBoard {
     }
 
     @GetMapping("/{id}")
-    public String boardDetail(@PathVariable("id") long id, HttpServletRequest request,  Model mv) throws CommonException {
+    public ModelAndView boardDetail(@PathVariable("id") long id, HttpServletRequest request,  ModelAndView mv) throws CommonException {
         Message message = new Message();
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -107,11 +122,14 @@ public class NoticeBoard {
         resultMap.put("boardDTO", boardDTO);
 
         message.setData(resultMap);
-        mv.addAttribute("result", message);
-        return noticeBoard;
+//        mv.addObject("result", message);
+        mv.addObject("id", id);
+        mv.addObject("boardDTO", boardDTO);
+        mv.setViewName(noticeBoard);
+        return mv;
     }
     @GetMapping("/modify/{id}")
-    public String boardEdit(@PathVariable("id") long id, HttpServletRequest request,  Model mv) throws CommonException {
+    public ModelAndView boardEdit(@PathVariable("id") long id, HttpServletRequest request,  ModelAndView mv) throws CommonException {
         log.debug("NoticeBoard.boardEdit()");
         HttpSession session = request.getSession();
         MemberSessionDTO member = (MemberSessionDTO) session.getAttribute("member");
@@ -124,34 +142,37 @@ public class NoticeBoard {
         boardDTO.setTitle(boardDetailVO.getTitle());
         boardDTO.setDetail(boardDetailVO.getDetail());
 
-        mv.addAttribute("boardDTO", boardDTO);
-        mv.addAttribute("id",id);
+        mv.addObject("boardDTO", boardDTO);
+        mv.addObject("id",id);
 
         //비교해서 맞는 아이디면 수정으로 넘어가고 아니면 "인증되어지지 않는 유저입니다."라는 문구를 띄우자.
         if(!boardDetailVO.getMember().getEmail().equals(member.getEmail())){
             log.debug("mv={}", mv.toString());
-            return noticeBoard;
+            mv.setViewName(noticeBoard);
+            return mv;
         }
-            return noticeBoardEdit;
+        mv.setViewName(noticeBoardEdit);
+            return mv;
     }
 
     @PostMapping("/modify/{id}")
-    public String boardEdit(@ModelAttribute("boardDTO") @Validated BoardDTO boardDTO, BindingResult bindingResult, @PathVariable("id") long id, HttpServletRequest request, Model mv) throws Exception {
+    public ModelAndView boardEdit(@ModelAttribute("boardDTO") @Validated BoardDTO boardDTO, BindingResult bindingResult, @PathVariable("id") long id, HttpServletRequest request, ModelAndView mv) throws Exception {
         HttpSession session = request.getSession();
         MemberSessionDTO memberSessionDTO = (MemberSessionDTO) session.getAttribute("member");
 
         if(bindingResult.hasErrors()){
-            return noticeBoardEdit;
+            mv.setViewName(noticeBoardEdit);
+            return mv;
         }
         boardService.updateByBoard(id, boardDTO);
-        mv.addAttribute("boardDTO", boardDTO);
-        return noticeBoardEdit;
+        mv.addObject("boardDTO", boardDTO);
+        mv.setViewName(noticeBoardEdit);
+        return mv;
     }
 
     @PostMapping("/delete/{id}")
     public String boardDelete(@PathVariable("id")long id){
         boardService.deleteByBoard(id);
-
         return "redirect:/noticeBoard";
     }
     @PostMapping("/delete")

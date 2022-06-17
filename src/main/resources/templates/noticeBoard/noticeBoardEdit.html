@@ -37,6 +37,9 @@
         .input-width{
             width: 100%;
         }
+        .p-error{
+            color: red;
+        }
     </style>
 </head>
 
@@ -70,7 +73,6 @@
                     <button type="submit"  th:form="fromData" th:formaction="@{/noticeBoard/modify/{id}(id= ${id})}" formmethod="post" class="btn btn-primary m-1"><span style="color: white">수정완료</span></button>
                     <button type="submit"  th:form="fromData" th:formaction="@{/noticeBoard/delete/{id}(id= ${id})}" formmethod="post" class="btn btn-danger m-1 ">삭제</button>
                 </div>
-
                 <!-- Content Row -->
                 <div class="row">
                     <div th:class="col">
@@ -86,12 +88,13 @@
                             <tr>
                                 <th  th:class="th-Width">제목</th>
                                 <td >
-                                    <input type="text" th:field="*{title}" th:class="input-width" th:errorclass="error-input" placeholder="제목을 입력해주세요" >
+                                    <input type="text" th:field="*{title}" th:class="input-width" th:errorclass="error-input"   th:attr="placeholder=${#fields.hasErrors('title') ? 'title을 추가해주세요' : ''}">
+                                    <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" th:errorclass="p-error"></p>
                                 </td>
                             </tr>
                             <tr>
                                 <th>내용</th>
-                                <td class="w-100" style="height: 10em"><textarea th:field="*{detail}"  th:class="textarea-WH"  placeholder="내용을 입력해주세요"></textarea></td>
+                                <td class="w-100" style="height: 10em"><textarea th:field="*{detail}"  th:class="textarea-WH" th:attr="placeholder=${#fields.hasErrors('detail') ? 'detail을 추가해주세요' : '' }"></textarea></td>
                             </tr>
                             </tbody>
                         </table>

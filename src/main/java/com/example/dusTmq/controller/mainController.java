@@ -38,23 +38,6 @@ public class mainController {
     private final MemberService memberService;
     private final BCryptPasswordEncoder encoder;
 
-    private String path = "/noticeBoard";
-    @GetMapping("/noticeBoard")
-    public ModelAndView tables(@PageableDefault(size = 100000, sort = "id", direction = Sort.Direction.DESC ) Pageable pageable){
-        Message message = new Message();
-        Map<String, Object> resultMap = new HashMap<>();
-        ModelAndView mv = new ModelAndView();
-        Page<BoardListDTO> boardListDTOS = boardService.pagingBoardListBy(pageable);
-
-        message.setData(boardListDTOS);
-        resultMap.put("message", message);
-
-        mv.addObject("result", resultMap);
-        mv.setViewName("/noticeBoard/noticeBoardList");
-        log.debug("ModelAndView = {}", mv.toString());
-        return mv;
-    }
-
     @GetMapping("/login")
     public ModelAndView login(
             @RequestParam(value = "error", required = false) String error,
@@ -104,12 +87,7 @@ public class mainController {
         mv.setViewName("/admin/home");
         return  mv;
     }
-    @GetMapping("/user")
-    public ModelAndView user(){
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/user/userInfo");
-        return mv;
-    }
+
 
 
 
