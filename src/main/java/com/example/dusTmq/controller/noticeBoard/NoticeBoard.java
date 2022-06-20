@@ -128,6 +128,8 @@ public class NoticeBoard {
         mv.setViewName(noticeBoard);
         return mv;
     }
+
+    //TODO: 댓글을 작성을 할 것이고, 쿼리의 계층형 level이 필요하다.
     @GetMapping("/modify/{id}")
     public ModelAndView boardEdit(@PathVariable("id") long id, HttpServletRequest request,  ModelAndView mv) throws CommonException {
         log.debug("NoticeBoard.boardEdit()");
@@ -166,7 +168,7 @@ public class NoticeBoard {
         }
         boardService.updateByBoard(id, boardDTO);
         mv.addObject("boardDTO", boardDTO);
-        mv.setViewName(noticeBoardEdit);
+        mv.setViewName("redirect:/noticeBoard/"+id);
         return mv;
     }
 
@@ -181,8 +183,4 @@ public class NoticeBoard {
 
         return "redirect:/noticeBoard";
     }
-
-
-    //공통처리할 bindingResult.hasErrors()를 처리할 방법을 생각해야함.
-
 }
