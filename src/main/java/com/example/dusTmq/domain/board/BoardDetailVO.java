@@ -2,6 +2,7 @@ package com.example.dusTmq.domain.board;
 
 import com.example.dusTmq.domain.user.Member;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -13,7 +14,8 @@ import java.time.LocalDateTime;
 @ToString(exclude = "createUserName")
 @Entity
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class BoardDetailVO {
 
     @Id
@@ -52,10 +54,6 @@ public class BoardDetailVO {
         this.member = createUserName;
         this.deleteUserName = deleteUserName;
     }
-
-    public BoardDetailVO() {
-    }
-
     public void updateBoardDetail(String title, String detail, LocalDateTime updateDate,  Member updateUserName){
             this.title=title;
             this.detail=detail;

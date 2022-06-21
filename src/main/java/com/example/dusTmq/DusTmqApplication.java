@@ -3,8 +3,10 @@ package com.example.dusTmq;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
-
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+//TODO: memberVO, boardVO auditing 적용 시킬것.
 @SpringBootApplication
+@EnableJpaAuditing  //JpaAuditing 활성화
 @PropertySource(value = {"classpath:config.properties"})
 public class DusTmqApplication {
 

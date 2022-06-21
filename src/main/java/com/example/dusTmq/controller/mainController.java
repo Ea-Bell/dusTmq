@@ -24,8 +24,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
-import static com.example.dusTmq.common.Message.getMessage;
 
 @RestController
 @Slf4j
@@ -36,16 +37,6 @@ public class mainController {
     private final IBoard boardService;
     private final MemberService memberService;
     private final BCryptPasswordEncoder encoder;
-
-    private String path = "/noticeBoard";
-    @GetMapping("/noticeBoard")
-    public ModelAndView tables(@PageableDefault(size = 100000, sort = "id", direction = Sort.Direction.DESC ) Pageable pageable){
-        ModelAndView mv = new ModelAndView();
-        Page<BoardListDTO> boardListDTOS = boardService.pagingBoardListBy(pageable);
-        mv.addObject("boardListDTOS", boardListDTOS);
-        mv.setViewName("/noticeBoard/noticeBoardList");
-        return mv;
-    }
 
     @GetMapping("/login")
     public ModelAndView login(
@@ -96,12 +87,7 @@ public class mainController {
         mv.setViewName("/admin/home");
         return  mv;
     }
-    @GetMapping("/user")
-    public ModelAndView user(){
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("/user/userInfo");
-        return mv;
-    }
+
 
 
 

@@ -79,8 +79,7 @@ public class BoardService implements IBoard{
     @Override
     @Transactional
     public Page<BoardListDTO> pagingBoardListBy( Pageable pageable){
-
-    return boardDetailRepository.pagingBoardListBy(pageable);
+        return boardDetailRepository.pagingBoardListBy(pageable);
     }
 
     @Override

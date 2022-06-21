@@ -2,6 +2,7 @@ package com.example.dusTmq.security;
 
 
 import com.example.dusTmq.service.member.MemberService;
+import com.example.dusTmq.service.oauth.PrincipalOauth2UserService;
 import com.example.dusTmq.utill.UtilConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,25 +10,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-@EnableGlobalMethodSecurity(prePostEnabled = true) //특정 페이지에 특정 권한이 있는 유저만 접근을 허용할 경우 권한 ㅁ치 인증을 미리 체크하겠다는 설정을 활성화
+@EnableGlobalMethodSecurity(prePostEnabled = true) //특정 페이지에 특정 권한이 있는 유저만 접근을 허용할 경우 권한 및 인증을 미리 체크하겠다는 설정을 활성화
 @EnableWebSecurity //시큐리티 필터 등록
 @RequiredArgsConstructor
 @Slf4j
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MemberService memberService;
+    private final PrincipalOauth2UserService principalOauth2UserService;
     private final AuthSucessHandler authSucessHandler;
     private final AuthFailureHandler authFailureHandler;
     private final UtilConfig config;
-    private final static String[] USER_WHITELIST = {"/","/user/**", "/noticeBoard/**"};
-    private final static String [] ADMIN_WHITELIST = {"/admin/**"};
-    private final static String[] PERMIT_ALL_WHITELIST = {"/css/**", "/js/**", "/img/**","/error","/favicon.ico","/vendor/**","/scss/**","/login/**","/register"};
-
+    private final static String[] USER_WHITELIST = {"/user/**", "/noticeBoard/**","/static"};
+    private final static String [] ADMIN_WHITELIST = {"/admin/**", };
+    private final static String[] PERMIT_ALL_WHITELIST = {"/css/**", "/js/**", "/img/**","/error/**","/favicon.ico","/vendor/**","/scss/**","/login/**","/register"};
     @Bean
     public BCryptPasswordEncoder encryptPassword(){
         return new BCryptPasswordEncoder();
@@ -37,6 +40,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(memberService).passwordEncoder(encryptPassword());
     }
+
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -56,6 +61,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                     .failureHandler(authFailureHandler)
                 .permitAll()
                 .and()
+/*  oauth2로그인은 다음번에 하는걸로. 아니면 oauth2인증 서버하나 구축하는게 맘편할듯.
+                .oauth2Login()
+                .loginPage("/login")
+                .defaultSuccessUrl("/")
+                .failureUrl("/login")
+                .userInfoEndpoint()
+                .userService(principalOauth2UserService)
+                .and()
+                .and()*/
                     .logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                     .logoutSuccessUrl("/login")
@@ -93,6 +107,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 //                    }
 //                })
                 ;
+
 
         http
                 .headers()

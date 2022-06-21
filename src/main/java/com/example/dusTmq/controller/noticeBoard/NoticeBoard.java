@@ -5,28 +5,30 @@ import com.example.dusTmq.common.StatusEnum;
 import com.example.dusTmq.common.exception.CommonException;
 import com.example.dusTmq.domain.board.BoardDetailVO;
 import com.example.dusTmq.domain.board.viewDto.BoardDTO;
-import com.example.dusTmq.domain.user.Member;
+import com.example.dusTmq.domain.board.viewDto.BoardListDTO;
 import com.example.dusTmq.domain.user.dto.MemberSessionDTO;
 import com.example.dusTmq.service.Board.IBoard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
-import static com.example.dusTmq.common.Message.getMessage;
 
-@Controller
+
+@RestController
 @Slf4j
 @RequestMapping("/noticeBoard")
 @RequiredArgsConstructor
@@ -38,84 +40,141 @@ public class NoticeBoard {
     private final static String noticeBoard = "/noticeBoard/noticeBoard";
     private final static String noticeBoardAdd = "/noticeBoard/noticeBoardRegister";
 
+    @GetMapping
+    public ModelAndView tables(@PageableDefault(size = 100000, sort = "id", direction = Sort.Direction.DESC ) Pageable pageable){
+        Message message = new Message();
+        Map<String, Object> resultMap = new HashMap<>();
+        ModelAndView mv = new ModelAndView();
+        Page<BoardListDTO> boardListDTOS = boardService.pagingBoardListBy(pageable);
+
+        message.setData(boardListDTOS);
+        resultMap.put("message", message);
+
+        mv.addObject("result", resultMap);
+        mv.setViewName("/noticeBoard/noticeBoardList");
+        return mv;
+    }
+
     @GetMapping("/noticeBoardRegister")
-    public String boardAdd(Model mv, HttpServletRequest request){
+    public ModelAndView boardAdd(){
+        ModelAndView mv = new ModelAndView();
+        log.debug("NoticeBoard.boardAdd()");
+        Message message = new Message();
+        Map<String, Object> result = new HashMap<>();
         BoardDTO boardDTO = new BoardDTO();
-        mv.addAttribute(boardDTO);
-        return noticeBoardAdd;
+
+        message.setData(boardDTO);
+        result.put("message", message);
+
+        mv.addObject("result", result);
+        mv.setViewName(noticeBoardAdd);
+        return mv;
     }
     @PostMapping(value = "/noticeBoardRegister")
-    public String boardAdd(@Validated @ModelAttribute("boardDTO") BoardDTO boardDTO, BindingResult bindingResult, HttpServletRequest request, Model mv) throws CommonException {
-
+    public ModelAndView boardAdd(@Validated @ModelAttribute("boardDTO") BoardDTO boardDTO, BindingResult bindingResult, HttpServletRequest request, ModelAndView mv) throws CommonException {
+        Message message = new Message();
         HttpSession session = request.getSession();
         MemberSessionDTO member = (MemberSessionDTO) session.getAttribute("member"); //캐스캐이팅 조심
-        log.debug("session={}",member.toString());
-
+        Map<String, Object> resultMap = new HashMap<>();
         if(bindingResult.hasErrors()){
-            Message errorMsg = boardError(bindingResult);
-            mv.addAttribute("errorMsg", errorMsg);
-            return noticeBoardAdd;
-        }
+            FieldError fieldError = bindingResult.getFieldError();
+            message.setMessage(fieldError.getDefaultMessage());
+            message.setStatus(StatusEnum.BAD_REQUEST);
+            boardAddBlankCheck(boardDTO, message, fieldError);
 
+            resultMap.put("message", message);
+            mv.addObject("result", resultMap);
+            mv.setViewName(noticeBoardAdd);
+            log.debug("resultMap.toString={}", resultMap.toString());
+            return mv;
+        }
         boardService.boardSave(boardDTO, member.getEmail());
-        return "redirect:/noticeBoard";
+        mv.setViewName("redirect:/noticeBoard");
+        return mv;
+    }
+
+    private void boardAddBlankCheck(BoardDTO boardDTO, Message message, FieldError fieldError) {
+        if(boardDTO.getDetail()=="" && boardDTO.getTitle()==""){
+            boardDTO.setDetail("title값을 넣어주세요");
+            boardDTO.setTitle("detail값을 넣어 주세요");
+        }
+        else if(boardDTO.getDetail()=="" && boardDTO.getTitle()!="" ){
+            boardDTO.setDetail(fieldError.getDefaultMessage());
+        }
+        else if( boardDTO.getDetail()!="" && boardDTO.getTitle()=="" ){
+            boardDTO.setTitle(fieldError.getDefaultMessage());
+        }
+        message.setData(boardDTO);
     }
 
     @GetMapping("/{id}")
-    public String boardDetail(@PathVariable("id") long id, HttpServletRequest request,  Model mv) throws Exception {
+    public ModelAndView boardDetail(@PathVariable("id") long id, HttpServletRequest request,  ModelAndView mv) throws CommonException {
+        Message message = new Message();
+        Map<String, Object> resultMap = new HashMap<>();
+
         //최적화 필요 "필요 없는 데이터까지 가지고옴"
         BoardDetailVO boardDetailVO = boardService.getByIdBoard(id).orElseThrow(() -> new NoSuchElementException("Not Found Account"));
-
         BoardDTO boardDTO = new BoardDTO();
         boardDTO.setTitle(boardDetailVO.getTitle());
         boardDTO.setDetail(boardDetailVO.getDetail());
 
-        mv.addAttribute("boardDTO", boardDTO);
-        mv.addAttribute("id",id);
+        resultMap.put("id", id);
+        resultMap.put("boardDTO", boardDTO);
 
-        return noticeBoard;
+        message.setData(resultMap);
+//        mv.addObject("result", message);
+        mv.addObject("id", id);
+        mv.addObject("boardDTO", boardDTO);
+        mv.setViewName(noticeBoard);
+        return mv;
     }
+
+    //TODO: 댓글을 작성을 할 것이고, 쿼리의 계층형 level이 필요하다.
     @GetMapping("/modify/{id}")
-    public String boardEdit(@PathVariable("id") long id, HttpServletRequest request,  Model mv) throws Exception {
-        //최적화 필요 "필요 없는 데이터까지 가지고옴"
-        BoardDetailVO boardDetailVO = boardService.getByIdBoard(id).orElseThrow(() -> new NoSuchElementException("Not Found Account"));
+    public ModelAndView boardEdit(@PathVariable("id") long id, HttpServletRequest request,  ModelAndView mv) throws CommonException {
+        log.debug("NoticeBoard.boardEdit()");
         HttpSession session = request.getSession();
         MemberSessionDTO member = (MemberSessionDTO) session.getAttribute("member");
 
+        Map<String, Object>result = new HashMap<>();
+
+        //최적화 필요 "필요 없는 데이터까지 가지고옴"
+        BoardDetailVO boardDetailVO = boardService.getByIdBoard(id).orElseThrow(() -> new NoSuchElementException("Not Found Account"));
         BoardDTO boardDTO = new BoardDTO();
         boardDTO.setTitle(boardDetailVO.getTitle());
         boardDTO.setDetail(boardDetailVO.getDetail());
 
-        mv.addAttribute("boardDTO", boardDTO);
-        mv.addAttribute("id",id);
+        mv.addObject("boardDTO", boardDTO);
+        mv.addObject("id",id);
 
         //비교해서 맞는 아이디면 수정으로 넘어가고 아니면 "인증되어지지 않는 유저입니다."라는 문구를 띄우자.
         if(!boardDetailVO.getMember().getEmail().equals(member.getEmail())){
-            log.error("It is not an authenticated user.");
-            return noticeBoard;
+            log.debug("mv={}", mv.toString());
+            mv.setViewName(noticeBoard);
+            return mv;
         }
-            return noticeBoardEdit;
+        mv.setViewName(noticeBoardEdit);
+            return mv;
     }
 
     @PostMapping("/modify/{id}")
-    public String boardEdit(@ModelAttribute("boardDTO") @Validated BoardDTO boardDTO, BindingResult bindingResult, @PathVariable("id") long id, HttpServletRequest request, Model mv) throws Exception {
+    public ModelAndView boardEdit(@ModelAttribute("boardDTO") @Validated BoardDTO boardDTO, BindingResult bindingResult, @PathVariable("id") long id, HttpServletRequest request, ModelAndView mv) throws Exception {
         HttpSession session = request.getSession();
         MemberSessionDTO memberSessionDTO = (MemberSessionDTO) session.getAttribute("member");
 
         if(bindingResult.hasErrors()){
-            Message errorMsg = boardError(bindingResult);
-            mv.addAttribute("errorMsg", errorMsg);
-            return noticeBoardEdit;
+            mv.setViewName(noticeBoardEdit);
+            return mv;
         }
         boardService.updateByBoard(id, boardDTO);
-        mv.addAttribute("boardDTO", boardDTO);
-        return noticeBoardEdit;
+        mv.addObject("boardDTO", boardDTO);
+        mv.setViewName("redirect:/noticeBoard/"+id);
+        return mv;
     }
 
     @PostMapping("/delete/{id}")
     public String boardDelete(@PathVariable("id")long id){
         boardService.deleteByBoard(id);
-
         return "redirect:/noticeBoard";
     }
     @PostMapping("/delete")
@@ -124,9 +183,4 @@ public class NoticeBoard {
 
         return "redirect:/noticeBoard";
     }
-
-    private Message boardError(BindingResult bindingResult) {
-        return getMessage(bindingResult, log);
-    }
-    //공통처리할 bindingResult.hasErrors()를 처리할 방법을 생각해야함.
 }

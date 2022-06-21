@@ -38,6 +38,9 @@
     .input-width{
       width: 100%;
     }
+    textarea::placeholder, input::placeholder{
+      color: red;
+    }
   </style>
 </head>
 
@@ -66,33 +69,36 @@
       <div class="container">
 
         <!-- Page Heading -->
+<!--            <p th:text="${result.message.data.title}">ddd</p>-->
+<!--          <p th:text="${result.message.data.detail}">ddd</p>-->
         <h1 class="h3 mb-1 m-5 text-gray-800">게시글 작성하기</h1>
         <div class="w-auto p-3  d-flex justify-content-end">
           <button type="submit"  th:form="fromData"  formaction="/noticeBoard/noticeBoardRegister" formmethod="post" class="btn btn-primary m-1"><span style="color: white">작성</span></button>
         </div>
-
         <!-- Content Row -->
         <div class="row">
           <div th:class="col">
-          <form th:name="fromData" th:id="fromData">
+          <form th:name="fromData" th:id="fromData" >
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <!--table -->
-            <table class="table" th:object="${boardDTO}" >
+            <table class="table">
               <thead>
               <tr>
                 <th scope="row" colspan="4">게시글작성</th>
               </tr>
               </thead>
-              <tbody>
+              <tbody th:each="result : ${result.message}">
               <tr>
                 <th th:class="th-Width">제목</th>
-                <td >
-                  <input type="text" th:field="*{title}" th:errorclass="error-input" th:class="input-width" placeholder="제목을 입력해주세요">
+                <td>
+                  <input type="text" th:id="title" th:name="title" th:placeholder="${result.data.title}"  th:class="input-width" placeholder="제목을 입력해주세요">
                 </td>
               </tr>
               <tr>
                 <th>내용</th>
-                <td class="w-100" style="height: 10em"><textarea th:field="*{detail}" th:class="textarea-WH" th:errorclass="error-textarea"   placeholder="내용을 입력해주세요"></textarea></td>
+                <td class="w-100" style="height: 10em">
+                  <textarea th:id="detail" th:name="detail" th:placeholder="${result.data.detail}" th:class="textarea-WH"></textarea>
+                </td>
               </tr>
               </tbody>
             </table>
@@ -136,7 +142,7 @@ th:nonce = "#{nonce}"
   //문서가 전부 로딩시 실행 실행 될 함수들
   window.onload = function (){
 
-    let errorResult= [[${errorMsg}]]
+    let errorResult= [[${errorResult}]]
     blankCheck(errorResult);
   }
 
