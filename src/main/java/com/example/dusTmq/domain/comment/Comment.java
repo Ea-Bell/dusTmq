@@ -1,5 +1,6 @@
-package com.example.dusTmq.domain.board;
+package com.example.dusTmq.domain.comment;
 
+import com.example.dusTmq.domain.board.BoardDetailVO;
 import com.example.dusTmq.domain.user.Member;
 import com.example.dusTmq.domain.util.BaseTImeEntity;
 import lombok.*;
@@ -11,12 +12,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = {"boardDetailVO", "member"})
-public class Comment extends BaseTImeEntity {
+@Inheritance(strategy =InheritanceType.JOINED)
+@ToString(exclude = {"boardDetailVO", "member", "parent", "childComment"})
+//컴포지션 클래스
+public abstract class Comment extends BaseTImeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,35 +39,10 @@ public class Comment extends BaseTImeEntity {
     @NotNull
     private Member member;
 
-    @NotNull
-    private String content;
-
-    //parentCommentId가 자기 자신을 가리키면 최상위 코멘트이다.
-  
-    private Long parentCommentId;
-
-    @Builder(builderMethodName = "newComment")
-    public Comment( BoardDetailVO boardDetailVO, Member member, String contents) {
-        this.commentId = commentId;
+    public Comment(BoardDetailVO boardDetailVO, Member member) {
         this.boardDetailVO = boardDetailVO;
         this.member = member;
-        this.content = contents;
     }
-
-    @Builder(builderMethodName = "nestedComments")
-    public Comment(BoardDetailVO boardDetailVO, Member member, String content, Long parentCommentId) {
-        this.boardDetailVO = boardDetailVO;
-        this.member = member;
-        this.content = content;
-        this.parentCommentId = parentCommentId;
-    }
-
-    public void newParentCommentId(Long parentCommentId){
-         this.parentCommentId = parentCommentId;
-    }
-
-
-
 }
 
 

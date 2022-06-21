@@ -67,29 +67,29 @@ public class BoardService implements IBoard{
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BoardDetailVO> findAllBoard(BoardDetailVO boardDetailVO){
         return boardDetailRepository.findAll();
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BoardDetailVO> findAllBoard(){return  boardDetailRepository.findAll();}
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<BoardListDTO> pagingBoardListBy( Pageable pageable){
         return boardDetailRepository.pagingBoardListBy(pageable);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<BoardDetailVO> findByBoardList(PageRequest pageRequest){
         return boardDetailRepository.findAll(pageRequest);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<BoardDetailVO> getByIdBoard(Long id) {
         return boardDetailRepository.findById(id);
     }
